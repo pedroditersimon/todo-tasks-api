@@ -1,22 +1,29 @@
 ﻿namespace TodoAPI.Services;
-using Npgsql;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TodoAPI.Models;
 
-public class PostgreDBService : ITodoDBHandler
+public class PostgreDBService : DbContext, ITodoDBHandler
 {
-    readonly NpgsqlDataSource dataSource;
+    DbSet<TodoTask> Tasks { get; set; }
 
-    public PostgreDBService(string host, string username, string password, string databaseName)
+    public PostgreDBService(DbContextOptions<PostgreDBService> options) : base(options)
     {
-        var connectionString = $"Host={host};Username={username};Password={password};Database={databaseName}";
-        dataSource = NpgsqlDataSource.Create(connectionString);
+
     }
 
 
     public async Task<TodoTask?> CreateTask(TodoTask task)
     {
+        TodoTask newTask = (TodoTask)task.Clone();
+        EntityEntry<TodoTask> entry = Tasks.Add(newTask);
+        await SaveChangesAsync();
+        return entry.Entity;
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"INSERT INTO \"Tasks\"" +
             $"(name, description, completed)" +
@@ -30,7 +37,7 @@ public class PostgreDBService : ITodoDBHandler
 
         // read first row
         await reader.ReadAsync();
-
+     
         return new TodoTask()
         {
             ID = reader.GetFieldValue<int>(0),
@@ -38,20 +45,33 @@ public class PostgreDBService : ITodoDBHandler
             Description = reader.GetFieldValue<string>(2),
             Completed = reader.GetFieldValue<bool>(3)
         };
+        */
     }
 
     public async Task<bool> DeleteTask(int id)
     {
+        TodoTask? task = await GetTask(id);
+        if (task == null)
+            return false;
+
+        Tasks.Remove(task);
+        return await SaveChangesAsync() > 0;
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"DELETE FROM \"Tasks\"" +
             $"where id = '{id}';"
         );
         int affectedRows = await cmd.ExecuteNonQueryAsync();
         return affectedRows > 0;
+        */
     }
 
     public async Task<List<TodoTask>> GetCompletedTasks()
     {
+        return Tasks.Where((t) => t.Completed == true).ToList();
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"Tasks\"" +
             $"where completed = true;"
@@ -78,10 +98,14 @@ public class PostgreDBService : ITodoDBHandler
         }
 
         return tasks;
+        */
     }
 
     public async Task<List<TodoTask>> GetPendingTasks()
     {
+        return Tasks.Where((t) => t.Completed == false).ToList();
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"Tasks\"" +
             $"where completed = false;"
@@ -108,10 +132,14 @@ public class PostgreDBService : ITodoDBHandler
         }
 
         return tasks;
+        */
     }
 
     public async Task<TodoTask?> GetTask(int id)
     {
+        return await Tasks.SingleOrDefaultAsync(t => t.ID == id);
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"Tasks\"" +
             $"where id = {id};"
@@ -131,10 +159,20 @@ public class PostgreDBService : ITodoDBHandler
             Description = reader.GetFieldValue<string>(2),
             Completed = reader.GetFieldValue<bool>(3)
         };
+        */
     }
 
     public async Task<TodoTask?> SetCompletedTask(int id, bool completed)
     {
+        TodoTask? task = await GetTask(id);
+        if (task == null)
+            return null;
+
+        task.Completed = completed;
+        await SaveChangesAsync();
+        return task;
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
         $"UPDATE \"Tasks\"" +
         $"SET completed='{completed}'" +
@@ -156,10 +194,20 @@ public class PostgreDBService : ITodoDBHandler
             Description = reader.GetFieldValue<string>(2),
             Completed = reader.GetFieldValue<bool>(3)
         };
+        */
     }
 
     public async Task<TodoTask?> UpdateTask(TodoTask task)
     {
+        TodoTask? currentTask = await GetTask(task.ID);
+        if (currentTask == null)
+            return null;
+
+        Entry(currentTask).CurrentValues.SetValues(task);
+        await SaveChangesAsync();
+        return currentTask;
+
+        /* SQL queries to use without an ORM 
         await using var cmd = dataSource.CreateCommand(
             $"UPDATE \"Tasks\"" +
             $"SET name='{task.Name}', description='{task.Description}', completed='{task.Completed}'" +
@@ -181,5 +229,6 @@ public class PostgreDBService : ITodoDBHandler
             Description = reader.GetFieldValue<string>(2),
             Completed = reader.GetFieldValue<bool>(3)
         };
+        */
     }
 }
