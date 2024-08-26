@@ -6,8 +6,9 @@ public interface ITodoDBHandler
 {
     // Get
     public Task<TodoTask?> GetTask(int id);
-    public Task<List<TodoTask>> GetPendingTasks();
-    public Task<List<TodoTask>> GetCompletedTasks();
+    public Task<List<TodoTask>> GetAllTask(int limit = 50);
+    public Task<List<TodoTask>> GetPendingTasks(int limit = 50);
+    public Task<List<TodoTask>> GetCompletedTasks(int limit = 50);
 
     // Create
     public Task<TodoTask?> CreateTask(TodoTask task);

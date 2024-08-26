@@ -11,6 +11,10 @@ public class TodoController(TodoService todoService) : ControllerBase
 
     readonly TodoService todoService = todoService;
 
+    [HttpGet]
+    public async Task<ActionResult<List<TodoTask>>> GetAll()
+        => await todoService.GetAllTask();
+
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoTask>> GetByID(int id)
     {

@@ -16,14 +16,19 @@ public class TodoService(ITodoDBHandler dbHandler) : ITodoDBHandler
         return dbHandler.DeleteTask(id);
     }
 
-    public Task<List<TodoTask>> GetCompletedTasks()
+    public Task<List<TodoTask>> GetAllTask(int limit = 50)
     {
-        return dbHandler.GetCompletedTasks();
+        return dbHandler.GetAllTask(limit);
     }
 
-    public Task<List<TodoTask>> GetPendingTasks()
+    public Task<List<TodoTask>> GetCompletedTasks(int limit = 50)
     {
-        return dbHandler.GetPendingTasks();
+        return dbHandler.GetCompletedTasks(limit);
+    }
+
+    public Task<List<TodoTask>> GetPendingTasks(int limit = 50)
+    {
+        return dbHandler.GetPendingTasks(limit);
     }
 
     public Task<TodoTask?> GetTask(int id)
