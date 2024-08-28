@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TodoAPI.Migrations.Seeds;
 using TodoAPI.Models;
 
 public class PostgreDBService : DbContext, ITodoDBHandler
@@ -14,6 +15,26 @@ public class PostgreDBService : DbContext, ITodoDBHandler
     {
 
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        /*
+        // Create database with this initial values (seed)
+        modelBuilder.Entity<TodoTask>().HasData(
+            new TodoTask() { ID = 1, Name = "my First Task", Description = "Inserted by ef migrations" },
+            new TodoTask() { ID = 2, Name = "TodoTask1", Description = "ModelBuilder builder" }
+        );
+        */
+
+        /*
+        // Handling seeds with a class (constructor)
+        new TodoTaskSeed(modelBuilder);
+        */
+
+        // Handling seeds with IEntityTypeConfiguration
+        modelBuilder.ApplyConfiguration(new TodoTaskSeed());
+    }
+
     public async Task<TodoTask?> GetTask(int id)
     {
         return await Tasks.SingleOrDefaultAsync(t => t.ID == id);

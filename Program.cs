@@ -33,6 +33,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    DbContext context = scope.ServiceProvider.GetRequiredService<PostgreDBService>();
+
+    // Create database using the DbContext
+    //context.Database.EnsureCreated();
+
+    // Create and sync database using 'dotnet ef migrations'
+    context.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
