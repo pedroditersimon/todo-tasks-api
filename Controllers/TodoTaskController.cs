@@ -6,10 +6,10 @@ namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TodoController(TodoService todoService) : ControllerBase
+public class TodoTaskController(TodoTaskService todoService) : ControllerBase
 {
 
-    readonly TodoService todoService = todoService;
+    readonly TodoTaskService todoService = todoService;
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> GetAll()
@@ -57,6 +57,15 @@ public class TodoController(TodoService todoService) : ControllerBase
         return updatedTask;
     }
 
+    [HttpPut(nameof(SetTaskGoal))]
+    public async Task<ActionResult<TodoTask>> SetTaskGoal(int taskID, int goalID)
+    {
+        TodoTask? updatedTask = await todoService.SetTaskGoal(taskID, goalID);
+        if (updatedTask == null)
+            return NotFound();
+
+        return updatedTask;
+    }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)

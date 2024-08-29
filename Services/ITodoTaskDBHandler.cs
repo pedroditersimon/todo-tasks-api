@@ -2,8 +2,9 @@
 
 namespace TodoAPI.Services;
 
-public interface ITodoDBHandler
+public interface ITodoTaskDBHandler
 {
+
     // Get
     public Task<TodoTask?> GetTask(int id);
     public Task<List<TodoTask>> GetAllTask(int limit = 50);
@@ -19,4 +20,5 @@ public interface ITodoDBHandler
     // Update
     public Task<TodoTask?> UpdateTask(TodoTask task);
     public Task<TodoTask?> SetCompletedTask(int id, bool completed);
+    public Task<TodoTask?> SetTaskGoal(int taskID, int goalID);
 }

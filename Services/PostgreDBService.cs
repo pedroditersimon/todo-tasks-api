@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using TodoAPI.Migrations.Seeds;
 using TodoAPI.Models;
 
-public class PostgreDBService : DbContext, ITodoDBHandler
+public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandler
 {
     DbSet<TodoTask> Tasks { get; set; }
+    DbSet<Goal> Goals { get; set; }
 
     public PostgreDBService(DbContextOptions<PostgreDBService> options) : base(options)
     {
@@ -35,6 +36,10 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         modelBuilder.ApplyConfiguration(new TodoTaskSeed());
     }
 
+
+    #region Task
+
+    // Get
     public async Task<TodoTask?> GetTask(int id)
     {
         return await Tasks.SingleOrDefaultAsync(t => t.ID == id);
@@ -135,9 +140,7 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         */
     }
 
-
-
-
+    // Create
     public async Task<TodoTask?> CreateTask(TodoTask task)
     {
         TodoTask newTask = (TodoTask)task.Clone();
@@ -170,6 +173,7 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         */
     }
 
+    // Delete
     public async Task<bool> DeleteTask(int id)
     {
         TodoTask? task = await GetTask(id);
@@ -189,8 +193,7 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         */
     }
 
-
-
+    // Update
     public async Task<TodoTask?> UpdateTask(TodoTask task)
     {
         TodoTask? currentTask = await GetTask(task.ID);
@@ -225,8 +228,6 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         };
         */
     }
-
-
     public async Task<TodoTask?> SetCompletedTask(int id, bool completed)
     {
         TodoTask? task = await GetTask(id);
@@ -261,4 +262,105 @@ public class PostgreDBService : DbContext, ITodoDBHandler
         };
         */
     }
+    public async Task<TodoTask?> SetTaskGoal(int taskID, int goalID)
+    {
+        // task need to exists
+        TodoTask? task = await GetTask(taskID);
+        if (task == null)
+            return null;
+
+        // goal need to exists
+        Goal? goal = await GetGoal(goalID);
+        if (goal == null)
+            return null;
+
+        // get the current goal of task
+        Goal? currentGoal = Goals.Include(g => g.Tasks)
+            .SingleOrDefault(g => g.Tasks.Any(t => t.ID == taskID));
+
+        // already in
+        if (currentGoal == goal)
+            return task;
+
+        // remove task from current goal
+        currentGoal?.Tasks.Remove(task);
+
+        // add task to new goal
+        goal.Tasks.Add(task);
+
+        await SaveChangesAsync();
+
+        return task;
+    }
+    #endregion
+
+    #region Goal
+
+    // Get
+    public async Task<Goal?> GetGoal(int id, bool includeTasks = true)
+    {
+        // include tasks
+        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+
+        return await query.SingleOrDefaultAsync(g => g.ID == id);
+    }
+
+    public async Task<List<Goal>> GetAllGoals(int limit = 50, bool includeTasks = true)
+    {
+        // include tasks
+        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+
+        return query.OrderBy(g => g.ID).Take(limit).ToList();
+    }
+
+    public async Task<List<Goal>> GetPendingGoals(int limit = 50, bool includeTasks = true)
+    {
+        // include tasks
+        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+
+        return query.Where((g) => g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
+    }
+
+    public async Task<List<Goal>> GetCompletedGoals(int limit = 50, bool includeTasks = true)
+    {
+        // include tasks
+        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+
+        return query.Where((g) => !g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
+    }
+
+    // Create
+    public async Task<Goal?> CreateGoal(Goal goal)
+    {
+        Goal newGoal = (Goal)goal.Clone();
+        EntityEntry<Goal> entry = Goals.Add(newGoal);
+        await SaveChangesAsync();
+        return entry.Entity;
+    }
+
+    // Delete
+    public async Task<bool> DeleteGoal(int id)
+    {
+        Goal? goal = await GetGoal(id);
+        if (goal == null)
+            return false;
+
+        Tasks.RemoveRange(goal.Tasks);
+        Goals.Remove(goal);
+        return await SaveChangesAsync() > 0;
+    }
+
+    // Update
+    public async Task<Goal?> UpdateGoal(Goal goal)
+    {
+        Goal? currentGoal = await GetGoal(goal.ID);
+        if (currentGoal == null)
+            return null;
+
+        Entry(currentGoal).CurrentValues.SetValues(goal);
+        await SaveChangesAsync();
+        return currentGoal;
+    }
+
+    #endregion
 }

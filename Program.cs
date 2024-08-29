@@ -18,10 +18,12 @@ builder.Services.AddDbContext<PostgreDBService>((IServiceProvider provider, DbCo
     optionsBuilder.UseNpgsql(connectionString);
 });
 
-// configure ITodoDBHandler to use as PostgreDBService
-builder.Services.AddScoped<ITodoDBHandler, PostgreDBService>();
+// configure DBInterfaces to use as PostgreDBService
+builder.Services.AddScoped<ITodoTaskDBHandler, PostgreDBService>();
+builder.Services.AddScoped<ITodoGoalDBHandler, PostgreDBService>();
 
-builder.Services.AddScoped<TodoService>();
+builder.Services.AddScoped<TodoTaskService>();
+builder.Services.AddScoped<TodoGoalService>();
 
 builder.Services.AddControllers();
 
