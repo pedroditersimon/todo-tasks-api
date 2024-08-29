@@ -274,6 +274,7 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
         if (goal == null)
             return null;
 
+        /* ef automatically does the check
         // get the current goal of task
         Goal? currentGoal = Goals.Include(g => g.Tasks)
             .SingleOrDefault(g => g.Tasks.Any(t => t.ID == taskID));
@@ -284,6 +285,7 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
 
         // remove task from current goal
         currentGoal?.Tasks.Remove(task);
+        */
 
         // add task to new goal
         goal.Tasks.Add(task);
