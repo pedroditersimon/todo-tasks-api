@@ -1,24 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoAPI.Models;
-using TodoAPI.Repositories;
+using TodoAPI.Services;
 
 namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TodoTaskController(ITodoTaskRepository taskRepository) : ControllerBase
+public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 {
 
-    readonly ITodoTaskRepository taskRepository = taskRepository;
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> GetAll()
-        => await taskRepository.GetAllTask();
+        => await unitOfWork.TaskRepository.GetAllTask();
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoTask>> GetByID(int id)
     {
-        TodoTask? task = await taskRepository.GetTask(id);
+        TodoTask? task = await unitOfWork.TaskRepository.GetTask(id);
         if (task == null)
             return NotFound();
 
@@ -27,22 +26,37 @@ public class TodoTaskController(ITodoTaskRepository taskRepository) : Controller
 
     [HttpGet(nameof(GetPendings))]
     public async Task<ActionResult<List<TodoTask>>> GetPendings()
-        => await taskRepository.GetPendingTasks();
+        => await unitOfWork.TaskRepository.GetPendingTasks();
 
     [HttpGet(nameof(GetCompleteds))]
     public async Task<ActionResult<List<TodoTask>>> GetCompleteds()
-        => await taskRepository.GetCompletedTasks();
+        => await unitOfWork.TaskRepository.GetCompletedTasks();
 
     [HttpPost]
     public async Task<ActionResult<TodoTask?>> Create(TodoTask task)
-        => await taskRepository.CreateTask(task);
+    {
+        TodoTask? createdTask = await unitOfWork.TaskRepository.CreateTask(task);
+        if (createdTask == null)
+            return Conflict();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
+
+        return createdTask;
+    }
+
 
     [HttpPut]
     public async Task<ActionResult<TodoTask>> Update(TodoTask task)
     {
-        TodoTask? updatedTask = await taskRepository.UpdateTask(task);
+        TodoTask? updatedTask = await unitOfWork.TaskRepository.UpdateTask(task);
         if (updatedTask == null)
             return NotFound();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
 
         return updatedTask;
     }
@@ -50,9 +64,13 @@ public class TodoTaskController(ITodoTaskRepository taskRepository) : Controller
     [HttpPut(nameof(SetCompleted))]
     public async Task<ActionResult<TodoTask>> SetCompleted(int id, bool completed)
     {
-        TodoTask? updatedTask = await taskRepository.SetCompletedTask(id, completed);
+        TodoTask? updatedTask = await unitOfWork.TaskRepository.SetCompletedTask(id, completed);
         if (updatedTask == null)
             return NotFound();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
 
         return updatedTask;
     }
@@ -60,9 +78,13 @@ public class TodoTaskController(ITodoTaskRepository taskRepository) : Controller
     [HttpPut(nameof(SetTaskGoal))]
     public async Task<ActionResult<TodoTask>> SetTaskGoal(int taskID, int goalID)
     {
-        TodoTask? updatedTask = await taskRepository.SetTaskGoal(taskID, goalID);
+        TodoTask? updatedTask = await unitOfWork.TaskRepository.SetTaskGoal(taskID, goalID);
         if (updatedTask == null)
             return NotFound();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
 
         return updatedTask;
     }
@@ -70,16 +92,20 @@ public class TodoTaskController(ITodoTaskRepository taskRepository) : Controller
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        TodoTask? task = await taskRepository.GetTask(id);
+        TodoTask? task = await unitOfWork.TaskRepository.GetTask(id);
         if (task == null)
             return NotFound();
 
-        bool deleted = await taskRepository.DeleteTask(id);
+        bool deleted = await unitOfWork.TaskRepository.DeleteTask(id);
 
         if (!deleted)
             return Conflict();
 
-        return Ok();
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
+
+        return NoContent();
     }
 
 

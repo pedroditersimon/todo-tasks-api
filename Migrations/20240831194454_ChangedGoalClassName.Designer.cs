@@ -11,8 +11,8 @@ using TodoAPI.Services;
 
 namespace TodoAPI.Migrations
 {
-    [DbContext(typeof(PostgreDBService))]
-    [Migration("20240831010813_ChangedGoalClassName")]
+    [DbContext(typeof(TodoDBContext))]
+    [Migration("20240831194454_ChangedGoalClassName")]
     partial class ChangedGoalClassName
     {
         /// <inheritdoc />

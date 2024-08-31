@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<PostgreDBSettings>(builder.Configuration.GetSection("PostgreDBSettings"));
 
 // configure DBContext of PostgreDBService, using loaded settings
-builder.Services.AddDbContext<PostgreDBService>((IServiceProvider provider, DbContextOptionsBuilder optionsBuilder) =>
+builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbContextOptionsBuilder optionsBuilder) =>
 {
     PostgreDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgreDBSettings>>().Value;
     var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
@@ -20,8 +20,10 @@ builder.Services.AddDbContext<PostgreDBService>((IServiceProvider provider, DbCo
 });
 
 // configure Repositories to use the PostgreDBService
-builder.Services.AddScoped<ITodoTaskRepository, PostgreDBService>();
-builder.Services.AddScoped<ITodoGoalRepository, PostgreDBService>();
+builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
+builder.Services.AddScoped<ITodoGoalRepository, TodoGoalRepository>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddControllers();
 
@@ -35,7 +37,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    DbContext context = scope.ServiceProvider.GetRequiredService<PostgreDBService>();
+    DbContext context = scope.ServiceProvider.GetRequiredService<TodoDBContext>();
 
     // Create database using the DbContext
     //context.Database.EnsureCreated();

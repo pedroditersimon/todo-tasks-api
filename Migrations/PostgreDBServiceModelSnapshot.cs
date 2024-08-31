@@ -10,7 +10,7 @@ using TodoAPI.Services;
 
 namespace TodoAPI.Migrations
 {
-    [DbContext(typeof(PostgreDBService))]
+    [DbContext(typeof(TodoDBContext))]
     partial class PostgreDBServiceModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

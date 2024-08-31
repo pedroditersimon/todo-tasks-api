@@ -11,7 +11,7 @@ using TodoAPI.Services;
 
 namespace TodoAPI.Migrations
 {
-    [DbContext(typeof(PostgreDBService))]
+    [DbContext(typeof(TodoDBContext))]
     [Migration("20240827190613_AddCreationDateToTask")]
     partial class AddCreationDateToTask
     {

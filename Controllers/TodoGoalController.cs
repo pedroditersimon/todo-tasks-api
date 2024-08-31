@@ -1,24 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoAPI.Models;
-using TodoAPI.Repositories;
+using TodoAPI.Services;
 
 namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TodoGoalController(ITodoGoalRepository goalRepository) : ControllerBase
+public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 {
-
-    readonly ITodoGoalRepository goalRepository = goalRepository;
 
     [HttpGet]
     public async Task<ActionResult<List<TodoGoal>>> GetAll()
-        => await goalRepository.GetAllGoals();
+        => await unitOfWork.GoalRepository.GetAllGoals();
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoGoal>> GetByID(int id)
     {
-        TodoGoal? goal = await goalRepository.GetGoal(id);
+        TodoGoal? goal = await unitOfWork.GoalRepository.GetGoal(id);
         if (goal == null)
             return NotFound();
 
@@ -27,22 +25,37 @@ public class TodoGoalController(ITodoGoalRepository goalRepository) : Controller
 
     [HttpGet(nameof(GetPendings))]
     public async Task<ActionResult<List<TodoGoal>>> GetPendings()
-        => await goalRepository.GetPendingGoals();
+        => await unitOfWork.GoalRepository.GetPendingGoals();
 
     [HttpGet(nameof(GetCompleteds))]
     public async Task<ActionResult<List<TodoGoal>>> GetCompleteds()
-        => await goalRepository.GetCompletedGoals();
+        => await unitOfWork.GoalRepository.GetCompletedGoals();
 
     [HttpPost]
     public async Task<ActionResult<TodoGoal?>> Create(TodoGoal goal)
-        => await goalRepository.CreateGoal(goal);
+    {
+        TodoGoal? createdGoal = await unitOfWork.GoalRepository.CreateGoal(goal);
+        if (createdGoal == null)
+            return Conflict();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
+
+        return createdGoal;
+    }
+
 
     [HttpPut]
     public async Task<ActionResult<TodoGoal>> Update(TodoGoal goal)
     {
-        TodoGoal? updatedGoal = await goalRepository.UpdateGoal(goal);
+        TodoGoal? updatedGoal = await unitOfWork.GoalRepository.UpdateGoal(goal);
         if (updatedGoal == null)
             return NotFound();
+
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
 
         return updatedGoal;
     }
@@ -52,16 +65,20 @@ public class TodoGoalController(ITodoGoalRepository goalRepository) : Controller
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        TodoGoal? goal = await goalRepository.GetGoal(id);
+        TodoGoal? goal = await unitOfWork.GoalRepository.GetGoal(id);
         if (goal == null)
             return NotFound();
 
-        bool deleted = await goalRepository.DeleteGoal(id);
+        bool deleted = await unitOfWork.GoalRepository.DeleteGoal(id);
 
         if (!deleted)
             return Conflict();
 
-        return Ok();
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
+
+        return NoContent();
     }
 
 

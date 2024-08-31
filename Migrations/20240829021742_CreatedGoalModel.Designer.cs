@@ -11,7 +11,7 @@ using TodoAPI.Services;
 
 namespace TodoAPI.Migrations
 {
-    [DbContext(typeof(PostgreDBService))]
+    [DbContext(typeof(TodoDBContext))]
     [Migration("20240829021742_CreatedGoalModel")]
     partial class CreatedGoalModel
     {
