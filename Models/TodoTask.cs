@@ -1,6 +1,6 @@
 ﻿namespace TodoAPI.Models;
 
-public class TodoTask : ICloneable
+public class TodoTask
 {
     public int ID { get; set; }
 
@@ -11,6 +11,5 @@ public class TodoTask : ICloneable
 
     public DateTime CreationDate { get; set; }
 
-    public object Clone() => this.MemberwiseClone();
 
 }

@@ -144,8 +144,7 @@ public class PostgreDBService : DbContext, ITodoTaskRepository, ITodoGoalReposit
     // Create
     public async Task<TodoTask?> CreateTask(TodoTask task)
     {
-        TodoTask newTask = (TodoTask)task.Clone();
-        EntityEntry<TodoTask> entry = Tasks.Add(newTask);
+        EntityEntry<TodoTask> entry = Tasks.Add(task);
         await SaveChangesAsync();
         return entry.Entity;
 
@@ -335,8 +334,7 @@ public class PostgreDBService : DbContext, ITodoTaskRepository, ITodoGoalReposit
     // Create
     public async Task<TodoGoal?> CreateGoal(TodoGoal goal)
     {
-        TodoGoal newGoal = (TodoGoal)goal.Clone();
-        EntityEntry<TodoGoal> entry = Goals.Add(newGoal);
+        EntityEntry<TodoGoal> entry = Goals.Add(goal);
         await SaveChangesAsync();
         return entry.Entity;
     }

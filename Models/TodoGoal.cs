@@ -1,6 +1,6 @@
 ﻿namespace TodoAPI.Models;
 
-public class TodoGoal : ICloneable
+public class TodoGoal
 {
     public int ID { get; set; }
 
@@ -8,6 +8,4 @@ public class TodoGoal : ICloneable
     public string? Description { get; set; }
 
     public ICollection<TodoTask> Tasks { get; set; }
-
-    public object Clone() => this.MemberwiseClone();
 }
