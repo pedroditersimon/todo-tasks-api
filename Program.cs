@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TodoAPI.Models;
+using TodoAPI.Repositories;
 using TodoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,12 +19,12 @@ builder.Services.AddDbContext<PostgreDBService>((IServiceProvider provider, DbCo
     optionsBuilder.UseNpgsql(connectionString);
 });
 
-// configure DBInterfaces to use as PostgreDBService
-builder.Services.AddScoped<ITodoTaskDBHandler, PostgreDBService>();
-builder.Services.AddScoped<ITodoGoalDBHandler, PostgreDBService>();
+// configure Repositories to use the PostgreDBService
+builder.Services.AddScoped<ITodoTaskRepository, PostgreDBService>();
+builder.Services.AddScoped<ITodoGoalRepository, PostgreDBService>();
 
-builder.Services.AddScoped<TodoTaskService>();
-builder.Services.AddScoped<TodoGoalService>();
+builder.Services.AddScoped<TodoTaskRepository>();
+builder.Services.AddScoped<TodoGoalRepository>();
 
 builder.Services.AddControllers();
 

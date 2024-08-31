@@ -1,54 +1,54 @@
 ﻿using TodoAPI.Models;
 
-namespace TodoAPI.Services;
+namespace TodoAPI.Repositories;
 
-public class TodoTaskService(ITodoTaskDBHandler taskDbHandler) : ITodoTaskDBHandler
+public class TodoTaskRepository(ITodoTaskRepository taskRepository) : ITodoTaskRepository
 {
-    readonly ITodoTaskDBHandler taskDbHandler = taskDbHandler;
+    readonly ITodoTaskRepository taskRepository = taskRepository;
 
 
     public Task<TodoTask?> CreateTask(TodoTask task)
     {
-        return taskDbHandler.CreateTask(task);
+        return taskRepository.CreateTask(task);
     }
 
     public Task<bool> DeleteTask(int id)
     {
-        return taskDbHandler.DeleteTask(id);
+        return taskRepository.DeleteTask(id);
     }
 
     public Task<List<TodoTask>> GetAllTask(int limit = 50)
     {
-        return taskDbHandler.GetAllTask(limit);
+        return taskRepository.GetAllTask(limit);
     }
 
     public Task<List<TodoTask>> GetCompletedTasks(int limit = 50)
     {
-        return taskDbHandler.GetCompletedTasks(limit);
+        return taskRepository.GetCompletedTasks(limit);
     }
 
     public Task<List<TodoTask>> GetPendingTasks(int limit = 50)
     {
-        return taskDbHandler.GetPendingTasks(limit);
+        return taskRepository.GetPendingTasks(limit);
     }
 
     public Task<TodoTask?> GetTask(int id)
     {
-        return taskDbHandler.GetTask(id);
+        return taskRepository.GetTask(id);
     }
 
     public Task<TodoTask?> SetCompletedTask(int id, bool completed)
     {
-        return taskDbHandler.SetCompletedTask(id, completed);
+        return taskRepository.SetCompletedTask(id, completed);
     }
 
     public Task<TodoTask?> SetTaskGoal(int taskID, int goalID)
     {
-        return taskDbHandler.SetTaskGoal(taskID, goalID);
+        return taskRepository.SetTaskGoal(taskID, goalID);
     }
 
     public Task<TodoTask?> UpdateTask(TodoTask task)
     {
-        return taskDbHandler.UpdateTask(task);
+        return taskRepository.UpdateTask(task);
     }
 }

@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TodoAPI.Migrations.Seeds;
 using TodoAPI.Models;
+using TodoAPI.Repositories;
 
-public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandler
+public class PostgreDBService : DbContext, ITodoTaskRepository, ITodoGoalRepository
 {
     DbSet<TodoTask> Tasks { get; set; }
-    DbSet<Goal> Goals { get; set; }
+    DbSet<TodoGoal> Goals { get; set; }
 
     public PostgreDBService(DbContextOptions<PostgreDBService> options) : base(options)
     {
@@ -270,7 +271,7 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
             return null;
 
         // goal need to exists
-        Goal? goal = await GetGoal(goalID);
+        TodoGoal? goal = await GetGoal(goalID);
         if (goal == null)
             return null;
 
@@ -299,43 +300,43 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
     #region Goal
 
     // Get
-    public async Task<Goal?> GetGoal(int id, bool includeTasks = true)
+    public async Task<TodoGoal?> GetGoal(int id, bool includeTasks = true)
     {
         // include tasks
-        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+        IQueryable<TodoGoal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
 
         return await query.SingleOrDefaultAsync(g => g.ID == id);
     }
 
-    public async Task<List<Goal>> GetAllGoals(int limit = 50, bool includeTasks = true)
+    public async Task<List<TodoGoal>> GetAllGoals(int limit = 50, bool includeTasks = true)
     {
         // include tasks
-        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+        IQueryable<TodoGoal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
 
         return query.OrderBy(g => g.ID).Take(limit).ToList();
     }
 
-    public async Task<List<Goal>> GetPendingGoals(int limit = 50, bool includeTasks = true)
+    public async Task<List<TodoGoal>> GetPendingGoals(int limit = 50, bool includeTasks = true)
     {
         // include tasks
-        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+        IQueryable<TodoGoal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
 
         return query.Where((g) => g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
     }
 
-    public async Task<List<Goal>> GetCompletedGoals(int limit = 50, bool includeTasks = true)
+    public async Task<List<TodoGoal>> GetCompletedGoals(int limit = 50, bool includeTasks = true)
     {
         // include tasks
-        IQueryable<Goal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
+        IQueryable<TodoGoal> query = includeTasks ? Goals.Include(g => g.Tasks) : Goals;
 
         return query.Where((g) => !g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
     }
 
     // Create
-    public async Task<Goal?> CreateGoal(Goal goal)
+    public async Task<TodoGoal?> CreateGoal(TodoGoal goal)
     {
-        Goal newGoal = (Goal)goal.Clone();
-        EntityEntry<Goal> entry = Goals.Add(newGoal);
+        TodoGoal newGoal = (TodoGoal)goal.Clone();
+        EntityEntry<TodoGoal> entry = Goals.Add(newGoal);
         await SaveChangesAsync();
         return entry.Entity;
     }
@@ -343,7 +344,7 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
     // Delete
     public async Task<bool> DeleteGoal(int id)
     {
-        Goal? goal = await GetGoal(id);
+        TodoGoal? goal = await GetGoal(id);
         if (goal == null)
             return false;
 
@@ -353,9 +354,9 @@ public class PostgreDBService : DbContext, ITodoTaskDBHandler, ITodoGoalDBHandle
     }
 
     // Update
-    public async Task<Goal?> UpdateGoal(Goal goal)
+    public async Task<TodoGoal?> UpdateGoal(TodoGoal goal)
     {
-        Goal? currentGoal = await GetGoal(goal.ID);
+        TodoGoal? currentGoal = await GetGoal(goal.ID);
         if (currentGoal == null)
             return null;
 

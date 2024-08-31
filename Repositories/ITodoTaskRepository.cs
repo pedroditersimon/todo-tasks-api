@@ -1,8 +1,8 @@
 ﻿using TodoAPI.Models;
 
-namespace TodoAPI.Services;
+namespace TodoAPI.Repositories;
 
-public interface ITodoTaskDBHandler
+public interface ITodoTaskRepository
 {
 
     // Get

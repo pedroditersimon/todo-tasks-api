@@ -1,6 +1,6 @@
 ﻿namespace TodoAPI.Models;
 
-public class Goal : ICloneable
+public class TodoGoal : ICloneable
 {
     public int ID { get; set; }
 

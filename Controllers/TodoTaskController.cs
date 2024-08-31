@@ -1,24 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoAPI.Models;
-using TodoAPI.Services;
+using TodoAPI.Repositories;
 
 namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TodoTaskController(TodoTaskService todoService) : ControllerBase
+public class TodoTaskController(TodoTaskRepository taskRepository) : ControllerBase
 {
 
-    readonly TodoTaskService todoService = todoService;
+    readonly TodoTaskRepository taskRepository = taskRepository;
 
     [HttpGet]
     public async Task<ActionResult<List<TodoTask>>> GetAll()
-        => await todoService.GetAllTask();
+        => await taskRepository.GetAllTask();
 
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoTask>> GetByID(int id)
     {
-        TodoTask? task = await todoService.GetTask(id);
+        TodoTask? task = await taskRepository.GetTask(id);
         if (task == null)
             return NotFound();
 
@@ -27,20 +27,20 @@ public class TodoTaskController(TodoTaskService todoService) : ControllerBase
 
     [HttpGet(nameof(GetPendings))]
     public async Task<ActionResult<List<TodoTask>>> GetPendings()
-        => await todoService.GetPendingTasks();
+        => await taskRepository.GetPendingTasks();
 
     [HttpGet(nameof(GetCompleteds))]
     public async Task<ActionResult<List<TodoTask>>> GetCompleteds()
-        => await todoService.GetCompletedTasks();
+        => await taskRepository.GetCompletedTasks();
 
     [HttpPost]
     public async Task<ActionResult<TodoTask?>> Create(TodoTask task)
-        => await todoService.CreateTask(task);
+        => await taskRepository.CreateTask(task);
 
     [HttpPut]
     public async Task<ActionResult<TodoTask>> Update(TodoTask task)
     {
-        TodoTask? updatedTask = await todoService.UpdateTask(task);
+        TodoTask? updatedTask = await taskRepository.UpdateTask(task);
         if (updatedTask == null)
             return NotFound();
 
@@ -50,7 +50,7 @@ public class TodoTaskController(TodoTaskService todoService) : ControllerBase
     [HttpPut(nameof(SetCompleted))]
     public async Task<ActionResult<TodoTask>> SetCompleted(int id, bool completed)
     {
-        TodoTask? updatedTask = await todoService.SetCompletedTask(id, completed);
+        TodoTask? updatedTask = await taskRepository.SetCompletedTask(id, completed);
         if (updatedTask == null)
             return NotFound();
 
@@ -60,7 +60,7 @@ public class TodoTaskController(TodoTaskService todoService) : ControllerBase
     [HttpPut(nameof(SetTaskGoal))]
     public async Task<ActionResult<TodoTask>> SetTaskGoal(int taskID, int goalID)
     {
-        TodoTask? updatedTask = await todoService.SetTaskGoal(taskID, goalID);
+        TodoTask? updatedTask = await taskRepository.SetTaskGoal(taskID, goalID);
         if (updatedTask == null)
             return NotFound();
 
@@ -70,11 +70,11 @@ public class TodoTaskController(TodoTaskService todoService) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        TodoTask? task = await todoService.GetTask(id);
+        TodoTask? task = await taskRepository.GetTask(id);
         if (task == null)
             return NotFound();
 
-        bool deleted = await todoService.DeleteTask(id);
+        bool deleted = await taskRepository.DeleteTask(id);
 
         if (!deleted)
             return Conflict();
