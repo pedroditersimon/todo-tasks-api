@@ -1,6 +1,6 @@
 ﻿namespace TodoAPI.Models;
 
-public class TodoTask
+public class TodoTask : EntityBaseModel
 {
     public int ID { get; set; }
 
@@ -8,8 +8,6 @@ public class TodoTask
     public string? Description { get; set; }
 
     public bool Completed { get; set; }
-
-    public DateTime CreationDate { get; set; }
 
 
 }

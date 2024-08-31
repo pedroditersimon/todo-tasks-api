@@ -32,6 +32,9 @@ public class TodoDBContext : DbContext
 
         // Handling seeds with IEntityTypeConfiguration
         modelBuilder.ApplyConfiguration(new TodoTaskSeed());
+
+        // dont include Soft deleted task in any queries
+        modelBuilder.Entity<TodoTask>().HasQueryFilter(t => !t.IsDeleted);
     }
 
 }

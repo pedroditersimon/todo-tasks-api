@@ -15,7 +15,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
     {
         return await dbContext.Tasks.SingleOrDefaultAsync(t => t.ID == id);
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"dbContext.Tasks\"" +
             $"where id = {id};"
@@ -47,7 +47,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
     {
         return dbContext.Tasks.Where((t) => t.Completed == false).OrderBy(t => t.ID).Take(limit).ToList();
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"dbContext.Tasks\"" +
             $"where completed = false;"
@@ -81,7 +81,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
     {
         return dbContext.Tasks.Where((t) => t.Completed == true).OrderBy(t => t.ID).Take(limit).ToList();
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"SELECT * FROM \"dbContext.Tasks\"" +
             $"where completed = true;"
@@ -117,7 +117,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
         EntityEntry<TodoTask> entry = dbContext.Tasks.Add(task);
         return entry.Entity;
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"INSERT INTO \"dbContext.Tasks\"" +
             $"(name, description, completed)" +
@@ -149,10 +149,12 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
         if (task == null)
             return false;
 
-        dbContext.Tasks.Remove(task);
+        //dbContext.Tasks.Remove(task);
+        task.IsDeleted = true;
+
         return true;
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"DELETE FROM \"dbContext.Tasks\"" +
             $"where id = '{id}';"
@@ -172,7 +174,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
         dbContext.Entry(currentTask).CurrentValues.SetValues(task);
         return currentTask;
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
             $"UPDATE \"dbContext.Tasks\"" +
             $"SET name='{task.Name}', description='{task.Description}', completed='{task.Completed}'" +
@@ -205,7 +207,7 @@ public class TodoTaskRepository(TodoDBContext dbContext) : ITodoTaskRepository
         task.Completed = completed;
         return task;
 
-        /* SQL queries to use without an ORM 
+        /* Raw sql
         await using var cmd = dataSource.CreateCommand(
         $"UPDATE \"dbContext.Tasks\"" +
         $"SET completed='{completed}'" +
