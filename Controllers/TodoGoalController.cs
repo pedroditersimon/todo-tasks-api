@@ -6,10 +6,10 @@ namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TodoGoalController(TodoGoalRepository goalRepository) : ControllerBase
+public class TodoGoalController(ITodoGoalRepository goalRepository) : ControllerBase
 {
 
-    readonly TodoGoalRepository goalRepository = goalRepository;
+    readonly ITodoGoalRepository goalRepository = goalRepository;
 
     [HttpGet]
     public async Task<ActionResult<List<TodoGoal>>> GetAll()

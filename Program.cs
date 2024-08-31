@@ -23,9 +23,6 @@ builder.Services.AddDbContext<PostgreDBService>((IServiceProvider provider, DbCo
 builder.Services.AddScoped<ITodoTaskRepository, PostgreDBService>();
 builder.Services.AddScoped<ITodoGoalRepository, PostgreDBService>();
 
-builder.Services.AddScoped<TodoTaskRepository>();
-builder.Services.AddScoped<TodoGoalRepository>();
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
