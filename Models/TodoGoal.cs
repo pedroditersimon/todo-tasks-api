@@ -7,5 +7,5 @@ public class TodoGoal
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public ICollection<TodoTask> Tasks { get; set; }
+    public virtual ICollection<TodoTask> Tasks { get; set; }
 }

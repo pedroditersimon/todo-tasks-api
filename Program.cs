@@ -16,7 +16,7 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
 {
     PostgreDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgreDBSettings>>().Value;
     var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
-    optionsBuilder.UseNpgsql(connectionString);
+    optionsBuilder.UseLazyLoadingProxies().UseNpgsql(connectionString);
 });
 
 // configure Repositories to use the PostgreDBService
