@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using TodoAPI.Interceptors;
 using TodoAPI.Models;
 using TodoAPI.Repositories;
 using TodoAPI.Services;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
     var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
     optionsBuilder.UseNpgsql(connectionString);
     optionsBuilder.UseLazyLoadingProxies();
+    optionsBuilder.AddInterceptors(new ReadExampleInterceptor());
 });
 
 builder.Services.AddScoped<DbContext, TodoDBContext>();
