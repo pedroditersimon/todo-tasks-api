@@ -1,4 +1,6 @@
-﻿namespace TodoAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TodoAPI.Models;
 
 public class EntityBaseModel<Tid>
 {
@@ -7,4 +9,7 @@ public class EntityBaseModel<Tid>
     public DateTime CreationDate { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    [ConcurrencyCheck]
+    public DateTime LastUpdatedTime { get; set; }
 }

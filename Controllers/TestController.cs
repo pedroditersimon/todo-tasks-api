@@ -83,5 +83,29 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
         return task;
     }
+
+
+    [HttpGet("Delayed/UpdateTaskName")]
+    public async Task<ActionResult<TodoTask?>> Delayed_UpdateTaskName(int id, string newName)
+    {
+        TodoTask? task = await unitOfWork.TaskRepository.GetByID(id);
+        if (task == null)
+            return NotFound();
+
+        // 10 seconds delay
+        await Task.Delay(10000);
+
+        // update and save
+        task.Name = newName;
+
+        TodoTask? updatedTask = await unitOfWork.TaskRepository.Update(task);
+        bool saved = await unitOfWork.Save() > 0;
+
+        // error
+        if (updatedTask == null || !saved)
+            return Conflict();
+
+        return updatedTask;
+    }
 }
 

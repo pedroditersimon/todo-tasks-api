@@ -58,6 +58,7 @@ public class GenericRepository<T, Tid>(DbContext dbContext) : IGenericRepository
         if (existingEntity == null)
             return null;
 
+        entity.LastUpdatedTime = DateTime.UtcNow;
         dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
         return existingEntity;
     }
