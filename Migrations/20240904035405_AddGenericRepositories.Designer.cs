@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TodoAPI.Services;
@@ -11,9 +12,11 @@ using TodoAPI.Services;
 namespace TodoAPI.Migrations
 {
     [DbContext(typeof(TodoDBContext))]
-    partial class PostgreDBServiceModelSnapshot : ModelSnapshot
+    [Migration("20240904035405_AddGenericRepositories")]
+    partial class AddGenericRepositories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,24 +51,6 @@ namespace TodoAPI.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("TodoGoal");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Hacer un pedido de frutas y verduras frescas",
-                            IsDeleted = false,
-                            Name = "Realizar Pedido a Proveedores"
-                        },
-                        new
-                        {
-                            ID = 2,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Crear y promocionar la oferta del día para atraer más clientes",
-                            IsDeleted = false,
-                            Name = "Preparar Oferta del Día"
-                        });
                 });
 
             modelBuilder.Entity("TodoAPI.Models.TodoTask", b =>
@@ -76,14 +61,14 @@ namespace TodoAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -104,29 +89,20 @@ namespace TodoAPI.Migrations
                         new
                         {
                             ID = 1,
+                            Completed = false,
                             CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Rutina diaria de ejercicios para mantener la salud",
-                            IsCompleted = false,
+                            Description = "Inserted by ef migrations",
                             IsDeleted = false,
-                            Name = "Hacer Ejercicio"
+                            Name = "my First Task"
                         },
                         new
                         {
                             ID = 2,
+                            Completed = false,
                             CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Comprar alimentos y productos necesarios para la semana",
-                            IsCompleted = true,
+                            Description = "ModelBuilder builder",
                             IsDeleted = false,
-                            Name = "Hacer la Compra"
-                        },
-                        new
-                        {
-                            ID = 3,
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Preparar y disfrutar de una cena ligera",
-                            IsCompleted = false,
-                            IsDeleted = false,
-                            Name = "Cenar"
+                            Name = "TodoTask1"
                         });
                 });
 

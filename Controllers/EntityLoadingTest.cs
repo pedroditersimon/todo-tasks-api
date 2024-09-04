@@ -7,13 +7,13 @@ namespace TodoAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class EntityLoadingTest(TodoDBContext dbContext) : ControllerBase
+public class EntityLoadingTest(DbContext dbContext, IUnitOfWork unitOfWork) : ControllerBase
 {
 
     [HttpGet(nameof(EagerLoading))]
     public async Task<ActionResult<TodoGoal?>> EagerLoading(int goalID = 1)
     {
-        return dbContext.Goals
+        return unitOfWork.GoalRepository.GetAll()
             .Include(g => g.Tasks)
             .SingleOrDefault(g => g.ID == goalID);
     }
@@ -21,7 +21,7 @@ public class EntityLoadingTest(TodoDBContext dbContext) : ControllerBase
     [HttpGet(nameof(LazyLoading))]
     public async Task<ActionResult<TodoGoal>> LazyLoading(int goalID = 1)
     {
-        TodoGoal? goal = dbContext.Goals.SingleOrDefault(g => g.ID == goalID);
+        TodoGoal? goal = unitOfWork.GoalRepository.GetAll().SingleOrDefault(g => g.ID == goalID);
         if (goal == null)
             return NotFound();
 
@@ -35,7 +35,7 @@ public class EntityLoadingTest(TodoDBContext dbContext) : ControllerBase
     [HttpGet(nameof(ExplicitLoading))]
     public async Task<ActionResult<TodoGoal>> ExplicitLoading(int goalID = 1)
     {
-        TodoGoal? goal = dbContext.Goals.SingleOrDefault(g => g.ID == goalID);
+        TodoGoal? goal = unitOfWork.GoalRepository.GetAll().SingleOrDefault(g => g.ID == goalID);
         if (goal == null)
             return NotFound();
 

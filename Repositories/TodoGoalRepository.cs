@@ -1,74 +1,45 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TodoAPI.Models;
 using TodoAPI.Services;
 
 namespace TodoAPI.Repositories;
 
-public class TodoGoalRepository(TodoDBContext dbContext) : ITodoGoalRepository
+public class TodoGoalRepository(TodoDBContext dbContext)
+    : GenericRepository<TodoGoal, int>(dbContext), ITodoGoalRepository
 {
 
-    // Get
-    public async Task<TodoGoal?> GetGoal(int id, bool includeTasks = true)
+    #region Get
+    public async Task<TodoGoal?> GetByIDWithTasks(int id)
+        => Entities
+            .Include(g => g.Tasks)
+            .SingleOrDefault(g => g.ID.Equals(id));
+
+    public IQueryable<TodoGoal> GetAllWithTasks(int limit = 50)
+        => Entities.Include(g => g.Tasks);
+
+    public IQueryable<TodoGoal> GetPendings(int limit = 50)
+        => Entities
+            .Where((g) => g.Tasks.Any(task => !task.IsCompleted))
+            .OrderBy(g => g.ID)
+            .Take(limit);
+
+
+    public IQueryable<TodoGoal> GetCompleteds(int limit = 50)
+        => Entities
+            .Where((g) => !g.Tasks.Any(task => !task.IsCompleted))
+            .OrderBy(g => g.ID)
+            .Take(limit);
+    #endregion
+
+    #region Update
+    public async Task<bool> AddTask(int goalID, TodoTask task)
     {
-        // include tasks
-        IQueryable<TodoGoal> query = includeTasks ? dbContext.Goals.Include(g => g.Tasks) : dbContext.Goals;
-
-        return await query.SingleOrDefaultAsync(g => g.ID == id);
-    }
-
-    public async Task<List<TodoGoal>> GetAllGoals(int limit = 50, bool includeTasks = true)
-    {
-        // include tasks
-        IQueryable<TodoGoal> query = includeTasks ? dbContext.Goals.Include(g => g.Tasks) : dbContext.Goals;
-
-        return query.OrderBy(g => g.ID).Take(limit).ToList();
-    }
-
-    public async Task<List<TodoGoal>> GetPendingGoals(int limit = 50, bool includeTasks = true)
-    {
-        // include tasks
-        IQueryable<TodoGoal> query = includeTasks ? dbContext.Goals.Include(g => g.Tasks) : dbContext.Goals;
-
-        return query.Where((g) => g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
-    }
-
-    public async Task<List<TodoGoal>> GetCompletedGoals(int limit = 50, bool includeTasks = true)
-    {
-        // include tasks
-        IQueryable<TodoGoal> query = includeTasks ? dbContext.Goals.Include(g => g.Tasks) : dbContext.Goals;
-
-        return query.Where((g) => !g.Tasks.Any(task => !task.Completed)).OrderBy(g => g.ID).Take(limit).ToList();
-    }
-
-    // Create
-    public async Task<TodoGoal?> CreateGoal(TodoGoal goal)
-    {
-        EntityEntry<TodoGoal> entry = dbContext.Goals.Add(goal);
-        return entry.Entity;
-    }
-
-    // Delete
-    public async Task<bool> DeleteGoal(int id)
-    {
-        TodoGoal? goal = await GetGoal(id);
+        TodoGoal? goal = await GetByIDWithTasks(goalID);
         if (goal == null)
             return false;
 
-        dbContext.Tasks.RemoveRange(goal.Tasks);
-        dbContext.Goals.Remove(goal);
+        goal.Tasks.Add(task);
         return true;
     }
-
-    // Update
-    public async Task<TodoGoal?> UpdateGoal(TodoGoal goal)
-    {
-        TodoGoal? currentGoal = await GetGoal(goal.ID);
-        if (currentGoal == null)
-            return null;
-
-        dbContext.Entry(currentGoal).CurrentValues.SetValues(goal);
-        return currentGoal;
-    }
-
+    #endregion
 }

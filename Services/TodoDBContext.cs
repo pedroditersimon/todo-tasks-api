@@ -6,8 +6,6 @@ namespace TodoAPI.Services;
 
 public class TodoDBContext : DbContext
 {
-    public DbSet<TodoTask> Tasks { get; set; }
-    public DbSet<TodoGoal> Goals { get; set; }
 
     public TodoDBContext(DbContextOptions<TodoDBContext> options) : base(options)
     {
@@ -32,9 +30,11 @@ public class TodoDBContext : DbContext
 
         // Handling seeds with IEntityTypeConfiguration
         modelBuilder.ApplyConfiguration(new TodoTaskSeed());
+        modelBuilder.ApplyConfiguration(new TodoGoalSeed());
 
-        // dont include Soft deleted task in any queries
+        // dont include Soft deleted entities in any queries
         modelBuilder.Entity<TodoTask>().HasQueryFilter(t => !t.IsDeleted);
+        modelBuilder.Entity<TodoGoal>().HasQueryFilter(t => !t.IsDeleted);
     }
 
 }

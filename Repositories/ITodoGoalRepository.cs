@@ -2,22 +2,16 @@
 
 namespace TodoAPI.Repositories;
 
-public interface ITodoGoalRepository
+public interface ITodoGoalRepository : IGenericRepository<TodoGoal, int>
 {
 
     // Get
-    public Task<TodoGoal?> GetGoal(int id, bool includeTasks = true);
-    public Task<List<TodoGoal>> GetAllGoals(int limit = 50, bool includeTasks = true);
-    public Task<List<TodoGoal>> GetPendingGoals(int limit = 50, bool includeTasks = true);
-    public Task<List<TodoGoal>> GetCompletedGoals(int limit = 50, bool includeTasks = true);
+    public Task<TodoGoal?> GetByIDWithTasks(int id);
+    public IQueryable<TodoGoal> GetAllWithTasks(int limit = 50);
 
-    // Create
-    public Task<TodoGoal?> CreateGoal(TodoGoal goal);
-
-    // Delete
-    public Task<bool> DeleteGoal(int id);
+    public IQueryable<TodoGoal> GetPendings(int limit = 50);
+    public IQueryable<TodoGoal> GetCompleteds(int limit = 50);
 
     // Update
-    public Task<TodoGoal?> UpdateGoal(TodoGoal goal);
-
+    public Task<bool> AddTask(int goalID, TodoTask task);
 }

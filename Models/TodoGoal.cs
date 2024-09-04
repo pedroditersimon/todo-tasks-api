@@ -1,9 +1,7 @@
 ﻿namespace TodoAPI.Models;
 
-public class TodoGoal
+public class TodoGoal : EntityBaseModel<int>
 {
-    public int ID { get; set; }
-
     public string? Name { get; set; }
     public string? Description { get; set; }
 
