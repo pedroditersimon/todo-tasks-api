@@ -11,4 +11,9 @@ public interface ITodoTaskRepository : IGenericRepository<TodoTask, int>
 
     // Update
     public Task<TodoTask?> SetCompleted(int id, bool completed);
+
+
+    // RawSQL Test
+    public Task<TodoTask?> RawSQL_GetById(int id);
+    public Task<TodoTask?> RawSQLWithDBSet_GetById(int id);
 }

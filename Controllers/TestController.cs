@@ -6,11 +6,11 @@ using TodoAPI.Services;
 namespace TodoAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class EntityLoadingTest(DbContext dbContext, IUnitOfWork unitOfWork) : ControllerBase
+[Route("Test")]
+public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : ControllerBase
 {
 
-    [HttpGet(nameof(EagerLoading))]
+    [HttpGet("EntityLoadingTest/" + nameof(EagerLoading))]
     public async Task<ActionResult<TodoGoal?>> EagerLoading(int goalID = 1)
     {
         return unitOfWork.GoalRepository.GetAll()
@@ -18,7 +18,7 @@ public class EntityLoadingTest(DbContext dbContext, IUnitOfWork unitOfWork) : Co
             .SingleOrDefault(g => g.ID == goalID);
     }
 
-    [HttpGet(nameof(LazyLoading))]
+    [HttpGet("EntityLoadingTest/" + nameof(LazyLoading))]
     public async Task<ActionResult<TodoGoal>> LazyLoading(int goalID = 1)
     {
         TodoGoal? goal = unitOfWork.GoalRepository.GetAll().SingleOrDefault(g => g.ID == goalID);
@@ -32,7 +32,7 @@ public class EntityLoadingTest(DbContext dbContext, IUnitOfWork unitOfWork) : Co
     }
 
 
-    [HttpGet(nameof(ExplicitLoading))]
+    [HttpGet("EntityLoadingTest/" + nameof(ExplicitLoading))]
     public async Task<ActionResult<TodoGoal>> ExplicitLoading(int goalID = 1)
     {
         TodoGoal? goal = unitOfWork.GoalRepository.GetAll().SingleOrDefault(g => g.ID == goalID);
@@ -46,4 +46,28 @@ public class EntityLoadingTest(DbContext dbContext, IUnitOfWork unitOfWork) : Co
 
         return goal;
     }
+
+
+    [HttpGet("RawSQL/GetById")]
+    public async Task<ActionResult<TodoTask?>> RawSQL_GetById(int id)
+    {
+        TodoTask? task = await unitOfWork.TaskRepository.RawSQL_GetById(id);
+        if (task == null)
+            return NotFound();
+
+        return task;
+    }
+
+
+    [HttpGet("RawSQLWithDBSet/GetById")]
+    public async Task<ActionResult<TodoTask?>> RawSQLWithDBSet_GetById(int id)
+    {
+        TodoTask? task = await unitOfWork.TaskRepository.RawSQLWithDBSet_GetById(id);
+        if (task == null)
+            return NotFound();
+
+        return task;
+    }
+
 }
+

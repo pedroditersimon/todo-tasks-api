@@ -1,4 +1,5 @@
-﻿using TodoAPI.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TodoAPI.Models;
 using TodoAPI.Services;
 
 namespace TodoAPI.Repositories;
@@ -58,5 +59,17 @@ public class TodoTaskRepository(TodoDBContext dbContext)
         };
         */
     }
+    #endregion
+
+    #region RawSQL Test
+    public async Task<TodoTask?> RawSQL_GetById(int id)
+        => await dbContext.Database
+            .SqlQueryRaw<TodoTask>("SELECT * FROM \"TodoTask\" WHERE \"ID\" = {0}", id)
+            .FirstOrDefaultAsync();
+
+    public async Task<TodoTask?> RawSQLWithDBSet_GetById(int id)
+       => await Entities
+            .FromSqlInterpolated($"SELECT * FROM \"TodoTask\" WHERE \"ID\" = {id}")
+            .FirstOrDefaultAsync();
     #endregion
 }
