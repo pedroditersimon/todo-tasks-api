@@ -19,8 +19,14 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
     var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
     optionsBuilder.UseNpgsql(connectionString);
     optionsBuilder.UseLazyLoadingProxies();
-    optionsBuilder.AddInterceptors(new ReadExampleInterceptor());
+    optionsBuilder.AddInterceptors(
+        new ReadExampleInterceptor()/*,
+        new SecondLevelCacheInterceptor(provider.GetRequiredService<IMemoryCache>())
+        */
+    );
 });
+
+//builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<DbContext, TodoDBContext>();
 

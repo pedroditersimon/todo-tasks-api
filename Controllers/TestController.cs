@@ -9,7 +9,7 @@ namespace TodoAPI.Controllers;
 [Route("Test")]
 public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : ControllerBase
 {
-
+    #region EntityLoadingTest
     [HttpGet("EntityLoadingTest/" + nameof(EagerLoading))]
     public async Task<ActionResult<TodoGoal?>> EagerLoading(int goalID = 1)
     {
@@ -46,8 +46,10 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
         return goal;
     }
+    #endregion
 
 
+    #region RawSQL
     [HttpGet("RawSQL/GetById")]
     public async Task<ActionResult<TodoTask?>> RawSQL_GetById(int id)
     {
@@ -68,6 +70,18 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
         return task;
     }
+    #endregion
 
+    [HttpGet("FirstLevelCache/GetById")]
+    public async Task<ActionResult<TodoTask?>> FirstLevelCache_GetById(int id)
+    {
+        // You may notice that the second query takes less than 1 ms. (enable ef Logging in appsettings)
+        TodoTask? task = await unitOfWork.TaskRepository.GetByID(id);
+        TodoTask? task2 = await unitOfWork.TaskRepository.GetByID(id);
+        if (task == null || task2 == null)
+            return NotFound();
+
+        return task;
+    }
 }
 
