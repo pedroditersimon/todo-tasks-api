@@ -16,4 +16,7 @@ public interface ITodoTaskRepository : IGenericRepository<TodoTask, int>
     // RawSQL Test
     public Task<TodoTask?> RawSQL_GetById(int id);
     public Task<TodoTask?> RawSQLWithDBSet_GetById(int id);
+
+    // Stored Procedures Test
+    public Task<TodoTask?> StoredProcedure_GetByID(int id);
 }

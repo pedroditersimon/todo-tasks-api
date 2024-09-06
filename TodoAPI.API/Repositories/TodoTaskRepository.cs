@@ -72,4 +72,42 @@ public class TodoTaskRepository(TodoDBContext dbContext)
             .FromSqlInterpolated($"SELECT * FROM \"TodoTask\" WHERE \"ID\" = {id}")
             .FirstOrDefaultAsync();
     #endregion
+
+    #region Stored Procedures
+    public async Task<TodoTask?> StoredProcedure_GetByID(int id)
+       => await Entities
+            .FromSqlInterpolated($"SELECT * FROM GetTaskByID({id})")
+            .FirstOrDefaultAsync();
+
+    /* Create function script (postgresql)
+    --DROP FUNCTION gettaskbyid(integer);
+
+    CREATE OR REPLACE FUNCTION GetTaskByID(tID integer)
+    RETURNS TABLE (
+        "ID" integer, 
+        "Name" text, 
+        "Description" text, 
+        "IsCompleted" boolean, 
+        "CreationDate" timestamp with time zone, 
+        "IsDeleted" boolean, 
+        "LastUpdatedTime" timestamp with time zone,
+	    "TodoGoalID" integer
+    ) AS $$
+    BEGIN
+    RETURN QUERY 
+        SELECT 
+            t."ID", 
+            t."Name", 
+            t."Description", 
+            t."IsCompleted", 
+            t."CreationDate", 
+            t."IsDeleted", 
+            t."LastUpdatedTime",
+		    t."TodoGoalID"
+        FROM public."TodoTask" t
+        WHERE t."ID" = tID;
+    END;
+    $$ LANGUAGE plpgsql;
+     */
+    #endregion
 }

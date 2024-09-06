@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoAPI.API.Services;
 using TodoAPI.API.Models;
+using TodoAPI.API.Services;
 
 namespace TodoAPI.API.Controllers;
 
@@ -70,6 +70,19 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
         return task;
     }
+    #endregion
+
+    #region RawSQL
+    [HttpGet("StoredProcedures/GetById")]
+    public async Task<ActionResult<TodoTask?>> StoredProcedures_GetById(int id)
+    {
+        TodoTask? task = await unitOfWork.TaskRepository.StoredProcedure_GetByID(id);
+        if (task == null)
+            return NotFound();
+
+        return task;
+    }
+
     #endregion
 
     [HttpGet("FirstLevelCache/GetById")]
