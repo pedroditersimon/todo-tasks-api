@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 using TodoAPI.API.Models;
 using TodoAPI.API.Services;
 
@@ -120,5 +122,34 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
         return updatedTask;
     }
+
+
+    [HttpGet("Transaction/InsertTask/{forceFail}")]
+    public async Task<ActionResult<TodoTask?>> Transaction_InsertTask(bool forceFail)
+    {
+        using IDbContextTransaction transaction = dbContext.Database.BeginTransaction();
+
+        // only works with dbContext set in the same scope, not in repositories
+        EntityEntry<TodoTask> insertedTask = dbContext.Set<TodoTask>().Add(new TodoTask
+        {
+            Name = "Transactional Test"
+        });
+
+        // only works in the same scope, not with unitOfWork.Save()
+        bool saved = await dbContext.SaveChangesAsync() > 0;
+
+        // error
+        if (forceFail || insertedTask == null || !saved)
+        {
+            await transaction.RollbackAsync();
+            // transaction.Dispose(); // this will dispose automatically with the scope
+
+            return Conflict();
+        }
+
+        transaction.Commit();
+        return insertedTask.Entity;
+    }
+
 }
 

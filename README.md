@@ -16,6 +16,7 @@ Resumen de los conocimientos nuevos que adquirí y apliqué en el sistema:
 - ConcurrencyCheck con LastUpdatedTime, para evitar sobrescribir un registro que ya se esta editando simultanemante.
 - Propiedades 'Navigators' de EntityFramework.
 - Tests unitarios.
+- Transaction (rollback y commit)
 
 ## Mención y agradecimiento
 Tomé riendas gracias a el [Curso de EntityFramework de NetMentor](https://youtube.com/playlist?list=PLesmOrW3mp4i2RdfsPI5R6o5EVacGuovz&si=kRphA8p3ITI40upE) en Youtube.  
