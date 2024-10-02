@@ -18,7 +18,7 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
     PostgreDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgreDBSettings>>().Value;
     var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
     optionsBuilder.UseNpgsql(connectionString);
-    optionsBuilder.UseLazyLoadingProxies();
+    //optionsBuilder.UseLazyLoadingProxies();
     optionsBuilder.AddInterceptors(
         new ReadExampleInterceptor()/*,
         new SecondLevelCacheInterceptor(provider.GetRequiredService<IMemoryCache>())
@@ -42,7 +42,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        policy =>
+        {
+            policy.WithOrigins("*")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 
@@ -65,6 +74,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configure the HTTP request pipeline.
+
+app.UseCors("AllowAnyOrigin");
 
 app.UseHttpsRedirection();
 
