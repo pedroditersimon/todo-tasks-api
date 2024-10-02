@@ -6,7 +6,7 @@ using TodoAPI.API.Models;
 namespace TodoAPI.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("Tasks")]
 public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 {
 
