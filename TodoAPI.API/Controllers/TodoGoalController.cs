@@ -6,7 +6,7 @@ using TodoAPI.API.Models;
 namespace TodoAPI.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("Goals")]
 public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 {
 
@@ -14,10 +14,24 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
     public async Task<ActionResult<List<TodoGoal>>> GetAll()
         => await unitOfWork.GoalRepository.GetAll().ToListAsync();
 
+    [HttpGet(nameof(GetAllWithTasks))]
+    public async Task<ActionResult<List<TodoGoal>>> GetAllWithTasks()
+        => await unitOfWork.GoalRepository.GetAllWithTasks().ToListAsync();
+
     [HttpGet("{id}")]
     public async Task<ActionResult<TodoGoal>> GetByID(int id)
     {
         TodoGoal? goal = await unitOfWork.GoalRepository.GetByID(id);
+        if (goal == null)
+            return NotFound();
+
+        return goal;
+    }
+
+    [HttpGet(nameof(GetByIDWithTasks) + "/{id}")]
+    public async Task<ActionResult<TodoGoal>> GetByIDWithTasks(int id)
+    {
+        TodoGoal? goal = await unitOfWork.GoalRepository.GetByIDWithTasks(id);
         if (goal == null)
             return NotFound();
 
@@ -61,7 +75,7 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
         return updatedGoal;
     }
 
-    [HttpPut(nameof(AddTask))]
+    [HttpPatch(nameof(AddTask))]
     public async Task<ActionResult<TodoGoal>> AddTask(int goalID, int taskID)
     {
         TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
@@ -85,6 +99,25 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
         return goal;
     }
 
+    [HttpPatch(nameof(RemoveTask))]
+    public async Task<ActionResult<TodoGoal>> RemoveTask(int goalID, int taskID)
+    {
+        bool success = await unitOfWork.GoalRepository.RemoveTask(goalID, taskID);
+        if (!success)
+            return Conflict();
+
+        // save
+        bool saved = await unitOfWork.Save() > 0;
+        if (!saved)
+            return Conflict();
+
+        // get updated entity
+        TodoGoal? goal = await unitOfWork.GoalRepository.GetByIDWithTasks(goalID);
+        if (goal == null)
+            return NotFound();
+
+        return goal;
+    }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)

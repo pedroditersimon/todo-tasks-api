@@ -14,4 +14,5 @@ public interface ITodoGoalRepository : IGenericRepository<TodoGoal, int>
 
     // Update
     public Task<bool> AddTask(int goalID, TodoTask task);
+    public Task<bool> RemoveTask(int goalID, int taskID);
 }

@@ -41,5 +41,18 @@ public class TodoGoalRepository(TodoDBContext dbContext)
         goal.Tasks.Add(task);
         return true;
     }
+
+    public async Task<bool> RemoveTask(int goalID, int taskID)
+    {
+        TodoGoal? goal = await GetByIDWithTasks(goalID);
+        if (goal == null)
+            return false;
+
+        TodoTask? task = goal.Tasks.SingleOrDefault(t => t.ID.Equals(taskID));
+        if (task == null)
+            return false;
+        
+        return goal.Tasks.Remove(task);
+    }
     #endregion
 }
