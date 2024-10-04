@@ -1,5 +1,6 @@
 Todo:
-- Devolver los goals con un campo calculado de si todas sus tareas estan completadas
+- arreglar referencia ciclica de TodoTaskGoal, al agregar un task a un goal
 
 Done:
+- Devolver los goals con un campo calculado de si todas sus tareas estan completadas
 - Agregar propiedad de "favorito" a las tareas y goals
