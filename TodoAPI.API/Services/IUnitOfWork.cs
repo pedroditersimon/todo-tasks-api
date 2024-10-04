@@ -4,7 +4,13 @@ namespace TodoAPI.API.Services;
 
 public interface IUnitOfWork : IDisposable
 {
-    public ITodoTaskRepository TaskRepository { get; }
-    public ITodoGoalRepository GoalRepository { get; }
-    public Task<int> Save();
+	// repositories
+	public ITodoTaskRepository TaskRepository { get; }
+	public ITodoGoalRepository GoalRepository { get; }
+
+	// services
+	public ITodoTaskService TaskService { get; }
+	public ITodoGoalService GoalService { get; }
+
+	public Task<int> Save();
 }

@@ -4,28 +4,46 @@ using TodoAPI.API.Repositories;
 
 namespace TodoAPI.API.Services;
 
-public class UnitOfWork(TodoDBContext dbContext, ITodoTaskRepository taskRepository, ITodoGoalRepository goalRepository) : IUnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
+	readonly TodoDBContext _dbContext;
 
-    public ITodoTaskRepository TaskRepository { get; } = taskRepository;
+	// repositories
+	public ITodoTaskRepository TaskRepository { get; }
+	public ITodoGoalRepository GoalRepository { get; }
 
-    public ITodoGoalRepository GoalRepository { get; } = goalRepository;
+	// services
+	public ITodoTaskService TaskService { get; }
+	public ITodoGoalService GoalService { get; }
 
-    public async Task<int> Save()
-    {
-        try
-        {
-            return await dbContext.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            Console.WriteLine("DbUpdateConcurrencyException");
-        }
-        return 0;
-    }
+	public UnitOfWork(TodoDBContext dbContext,
+		ITodoTaskRepository taskRepository, ITodoGoalRepository goalRepository,
+		ITodoTaskService taskService, ITodoGoalService goalService)
+	{
+		_dbContext = dbContext;
+
+		TaskRepository = taskRepository;
+		GoalRepository = goalRepository;
+
+		TaskService = taskService;
+		GoalService = goalService;
+	}
+
+	public async Task<int> Save()
+	{
+		try
+		{
+			return await _dbContext.SaveChangesAsync();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			Console.WriteLine("DbUpdateConcurrencyException");
+		}
+		return 0;
+	}
 
 
-    public void Dispose()
-        => dbContext.Dispose();
+	public void Dispose()
+		=> _dbContext.Dispose();
 
 }
