@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TodoAPI.API.Services;
@@ -11,9 +12,11 @@ using TodoAPI.API.Services;
 namespace TodoAPI.API.Migrations
 {
     [DbContext(typeof(TodoDBContext))]
-    partial class PostgreDBServiceModelSnapshot : ModelSnapshot
+    [Migration("20241004123223_AddFavoriteProp")]
+    partial class AddFavoriteProp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
