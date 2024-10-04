@@ -13,7 +13,7 @@ public class TaskRepositoryTests
 		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
 		TodoTaskRepository taskRepository = new(dbContext);
 
-		await taskRepository.Create(new TodoTask() { ID = 1 });
+		taskRepository.Create(new TodoTask() { ID = 1 });
 		await dbContext.SaveChangesAsync();
 
 		TodoTask? task = await taskRepository.GetByID(1);
@@ -27,7 +27,7 @@ public class TaskRepositoryTests
 		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
 		TodoTaskRepository taskRepository = new(dbContext);
 
-		await taskRepository.Create(new TodoTask() { ID = 1 });
+		taskRepository.Create(new TodoTask() { ID = 1 });
 		await dbContext.SaveChangesAsync();
 
 		TodoTask? task = await taskRepository.GetByID(2);

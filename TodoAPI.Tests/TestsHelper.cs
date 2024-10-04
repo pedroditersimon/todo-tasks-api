@@ -20,8 +20,11 @@ public static class TestsHelper
 		// create dependencies
 		ITodoTaskRepository taskRepository = new TodoTaskRepository(dbContext);
 		ITodoGoalRepository goalRepository = new TodoGoalRepository(dbContext);
-		ITodoGoalService goalService = new TodoGoalService(goalRepository);
-		ITodoTaskService taskService = new TodoTaskService(dbContext, taskRepository, goalService);
+		ITodoTaskGoalRepository taskGoalRepository = new TodoTaskGoalRepository(dbContext);
+
+		ITodoTaskGoalService taskGoalService = new TodoTaskGoalService(taskGoalRepository);
+		ITodoGoalService goalService = new TodoGoalService(goalRepository, taskGoalService);
+		ITodoTaskService taskService = new TodoTaskService(dbContext, taskRepository, goalService, taskGoalService);
 
 		return new UnitOfWork(dbContext, taskRepository, goalRepository, taskService, goalService);
 	}

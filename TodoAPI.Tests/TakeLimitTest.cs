@@ -16,7 +16,7 @@ public class TakeLimitTest
 		// create some tasks
 		for (int i = 0; i < 4; i++)
 		{
-			await unitOfWork.TaskService.Create(new TodoTask() { ID = i + 1 });
+			unitOfWork.TaskService.Create(new TodoTask() { ID = i + 1 });
 		}
 		await unitOfWork.Save();
 

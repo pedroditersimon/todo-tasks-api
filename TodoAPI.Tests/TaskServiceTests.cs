@@ -14,11 +14,12 @@ public class TaskServiceTests
 
 		// Create a goal and an associated task
 		var goal = new TodoGoal { ID = 1 };
-		var task = new TodoTask { ID = 1, GoalID = goal.ID };
+		var task = new TodoTask { ID = 1 };
 
 		// Add the goal and the task to the context
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
+		await unitOfWork.GoalService.AddTask(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Act: mark the task as completed
@@ -45,11 +46,12 @@ public class TaskServiceTests
 
 		// Create a goal and an associated task
 		var goal = new TodoGoal { ID = 1 };
-		var task = new TodoTask { ID = 1, GoalID = goal.ID };
+		var task = new TodoTask { ID = 1 };
 
 		// Add the goal and the task to the context
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
+		await unitOfWork.GoalService.AddTask(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Act: mark the task as not completed
@@ -76,11 +78,12 @@ public class TaskServiceTests
 
 		// Create a goal and an associated task
 		var goal = new TodoGoal { ID = 1 };
-		var task = new TodoTask { ID = 1, GoalID = null };
+		var task = new TodoTask { ID = 1 };
 
 		// Add the goal and the task to the context
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
+		// Dont associate
 		await unitOfWork.Save();
 
 		// Act: mark the task as completed
