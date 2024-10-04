@@ -1,6 +1,6 @@
-﻿namespace TodoAPI.API.Repositories;
+﻿namespace TodoAPI.API.Services;
 
-public interface IGenericRepository<T, Tid>
+public interface IGenericService<T, Tid>
 {
 	// Get
 	public Task<T?> GetByID(Tid id);
@@ -15,4 +15,5 @@ public interface IGenericRepository<T, Tid>
 
 	// Update
 	public Task<T?> Update(T task);
+
 }
