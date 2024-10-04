@@ -1,47 +1,36 @@
-using Microsoft.EntityFrameworkCore;
-using TodoAPI.Data.Models;
 using TodoAPI.API.Repositories;
 using TodoAPI.API.Services;
+using TodoAPI.Data.Models;
 using Xunit;
 
 namespace TodoAPI.Tests;
 public class TodoTaskTests
 {
 
-    static TodoDBContext CreateDBContext()
-    {
-        DbContextOptions<TodoDBContext> options = new DbContextOptionsBuilder<TodoDBContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
+	[Fact]
+	public async void GetByID()
+	{
+		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
+		TodoTaskRepository taskRepository = new(dbContext);
 
-        return new TodoDBContext(options);
-    }
+		await taskRepository.Create(new TodoTask() { ID = 1 });
+		await dbContext.SaveChangesAsync();
 
-
-    [Fact]
-    public async void GetByID()
-    {
-        using TodoDBContext dbContext = CreateDBContext();
-        TodoTaskRepository taskRepository = new(dbContext);
-
-        await taskRepository.Create(new TodoTask() { ID = 1 });
-        await dbContext.SaveChangesAsync();
-
-        TodoTask? task = await taskRepository.GetByID(1);
-        Assert.True(task != null);
-    }
+		TodoTask? task = await taskRepository.GetByID(1);
+		Assert.True(task != null);
+	}
 
 
-    [Fact]
-    public async void GetByID_NotFound()
-    {
-        using TodoDBContext dbContext = CreateDBContext();
-        TodoTaskRepository taskRepository = new(dbContext);
+	[Fact]
+	public async void GetByID_NotFound()
+	{
+		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
+		TodoTaskRepository taskRepository = new(dbContext);
 
-        await taskRepository.Create(new TodoTask() { ID = 1 });
-        await dbContext.SaveChangesAsync();
+		await taskRepository.Create(new TodoTask() { ID = 1 });
+		await dbContext.SaveChangesAsync();
 
-        TodoTask? task = await taskRepository.GetByID(2);
-        Assert.True(task == null);
-    }
+		TodoTask? task = await taskRepository.GetByID(2);
+		Assert.True(task == null);
+	}
 }
