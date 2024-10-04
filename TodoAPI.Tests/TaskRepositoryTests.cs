@@ -4,7 +4,7 @@ using TodoAPI.Data.Models;
 using Xunit;
 
 namespace TodoAPI.Tests;
-public class TodoTaskTests
+public class TaskRepositoryTests
 {
 
 	[Fact]
