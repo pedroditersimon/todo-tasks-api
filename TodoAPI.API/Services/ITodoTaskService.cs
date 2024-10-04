@@ -5,7 +5,9 @@ namespace TodoAPI.API.Services;
 public interface ITodoTaskService : IGenericService<TodoTask, int>
 {
 	// Get
-	public IQueryable<TodoTask> GetPendings(int limit = 50);
+	public IQueryable<TodoTask> GetAllByGoal(int goalID, int limit = 0);
+
+	public IQueryable<TodoTask> GetPendings(int limit = 0);
 	public IQueryable<TodoTask> GetCompleteds(int limit = 0);
 
 	// Update

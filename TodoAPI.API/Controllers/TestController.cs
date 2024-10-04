@@ -16,7 +16,7 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 	public async Task<ActionResult<TodoGoal?>> EagerLoading(int goalID = 1)
 	{
 		return unitOfWork.GoalRepository.GetAll()
-			.Include(g => g.Tasks)
+			.Include(g => g.TodoTaskGoal)
 			.SingleOrDefault(g => g.ID == goalID);
 	}
 
@@ -28,7 +28,7 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 			return NotFound();
 
 		// must have: UseLazyLoadingProxies() from Microsoft.EntityFrameworkCore.Proxies
-		ICollection<TodoTask> goalTasks = goal.Tasks.ToList();
+		ICollection<TodoTask> goalTasks = goal.TodoTaskGoal.Select(tg => tg.TodoTask).ToList();
 
 		return goal;
 	}
@@ -43,7 +43,7 @@ public class TestController(DbContext dbContext, IUnitOfWork unitOfWork) : Contr
 
 		// this doesnt require UseLazyLoadingProxies and can bypass it
 		await dbContext.Entry(goal)
-			.Collection(g => g.Tasks)
+			.Collection(g => g.TodoTaskGoal)
 			.LoadAsync();
 
 		return goal;

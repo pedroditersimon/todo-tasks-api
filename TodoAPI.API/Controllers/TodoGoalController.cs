@@ -14,9 +14,6 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	public async Task<ActionResult<List<TodoGoal>>> GetAll()
 		=> await unitOfWork.GoalService.GetAll().ToListAsync();
 
-	[HttpGet(nameof(GetAllWithTasks))]
-	public async Task<ActionResult<List<TodoGoal>>> GetAllWithTasks()
-		=> await unitOfWork.GoalService.GetAllWithTasks().ToListAsync();
 
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TodoGoal>> GetByID(int id)
@@ -28,14 +25,14 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 		return goal;
 	}
 
-	[HttpGet(nameof(GetByIDWithTasks) + "/{id}")]
-	public async Task<ActionResult<TodoGoal>> GetByIDWithTasks(int id)
+	[HttpGet(nameof(GetAllByTask))]
+	public async Task<ActionResult<List<TodoGoal>>> GetAllByTask(int taskID)
 	{
-		TodoGoal? goal = await unitOfWork.GoalService.GetByIDWithTasks(id);
-		if (goal == null)
+		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
+		if (task == null)
 			return NotFound();
 
-		return goal;
+		return await unitOfWork.GoalService.GetAllByTask(taskID).ToListAsync();
 	}
 
 	[HttpGet(nameof(GetPendings))]
@@ -78,11 +75,15 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	[HttpPatch(nameof(AddTask))]
 	public async Task<ActionResult<TodoGoal>> AddTask(int goalID, int taskID)
 	{
+		TodoGoal? goal = await unitOfWork.GoalService.GetByID(goalID);
+		if (goal == null)
+			return NotFound();
+
 		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
 		if (task == null)
 			return NotFound();
 
-		bool success = await unitOfWork.GoalService.AddTask(goalID, task);
+		bool success = await unitOfWork.GoalService.AddTask(goalID, taskID);
 		if (!success)
 			return Conflict();
 
@@ -92,16 +93,24 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 			return Conflict();
 
 		// get updated entity
-		TodoGoal? goal = await unitOfWork.GoalService.GetByIDWithTasks(goalID);
-		if (goal == null)
-			return NotFound();
+		TodoGoal? updatedGoal = await unitOfWork.GoalService.GetByID(goalID);
+		if (updatedGoal == null)
+			return Conflict();
 
-		return goal;
+		return updatedGoal;
 	}
 
 	[HttpPatch(nameof(RemoveTask))]
 	public async Task<ActionResult<TodoGoal>> RemoveTask(int goalID, int taskID)
 	{
+		TodoGoal? goal = await unitOfWork.GoalService.GetByID(goalID);
+		if (goal == null)
+			return NotFound();
+
+		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
+		if (task == null)
+			return NotFound();
+
 		bool successRemoved = await unitOfWork.GoalService.RemoveTask(goalID, taskID);
 		if (!successRemoved)
 			return Conflict();
@@ -112,11 +121,11 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 			return Conflict();
 
 		// get updated entity
-		TodoGoal? goal = await unitOfWork.GoalService.GetByIDWithTasks(goalID);
-		if (goal == null)
-			return NotFound();
+		TodoGoal? updatedGoal = await unitOfWork.GoalService.GetByID(goalID);
+		if (updatedGoal == null)
+			return Conflict();
 
-		return goal;
+		return updatedGoal;
 	}
 
 	[HttpDelete("{id}")]

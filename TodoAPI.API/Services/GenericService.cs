@@ -13,7 +13,7 @@ public class GenericService<T, Tid> : IGenericService<T, Tid>
 		_repository = repository;
 	}
 
-	public Task<T?> Create(T task) => _repository.Create(task);
+	public async Task<T?> Create(T task) => await _repository.Create(task);
 
 	public IQueryable<T> GetAll(int limit = 0)
 		=> _repository.GetAll().TakeLimit(limit);

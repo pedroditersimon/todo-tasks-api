@@ -9,18 +9,27 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 {
 	readonly TodoDBContext _dbContext;
 	readonly ITodoTaskRepository _repository;
-	readonly ITodoGoalService _goalService;
 
-	public TodoTaskService(TodoDBContext dBContext, ITodoTaskRepository repository, ITodoGoalService goalService)
+	readonly ITodoGoalService _goalService;
+	readonly ITodoTaskGoalService _taskGoalService;
+
+	public TodoTaskService(TodoDBContext dBContext,
+		ITodoTaskRepository repository,
+		ITodoGoalService goalService, ITodoTaskGoalService taskGoalService)
 		: base(repository)
 	{
 		_dbContext = dBContext;
 		_repository = repository;
+
 		_goalService = goalService;
+		_taskGoalService = taskGoalService;
 	}
 
 
 	#region Get
+	public IQueryable<TodoTask> GetAllByGoal(int goalID, int limit = 0)
+		=> _taskGoalService.GetTasksByGoalID(goalID, limit);
+
 	public IQueryable<TodoTask> GetPendings(int limit = 0)
 		=> _repository.GetAll()
 			.Where((t) => t.IsCompleted == false)
@@ -104,6 +113,8 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 	   => await _dbContext.Set<TodoTask>()
 			.FromSqlInterpolated($"SELECT * FROM GetTaskByID({id})")
 			.FirstOrDefaultAsync();
+
+
 
 	/* Create function script (postgresql)
     --DROP FUNCTION gettaskbyid(integer);

@@ -25,6 +25,16 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 		return task;
 	}
 
+	[HttpGet(nameof(GetAllByTask))]
+	public async Task<ActionResult<List<TodoTask>>> GetAllByTask(int goalID)
+	{
+		TodoGoal? goal = await unitOfWork.GoalRepository.GetByID(goalID);
+		if (goal == null)
+			return NotFound();
+
+		return await unitOfWork.TaskService.GetAllByGoal(goalID).ToListAsync();
+	}
+
 	[HttpGet(nameof(GetPendings))]
 	public async Task<ActionResult<List<TodoTask>>> GetPendings()
 		=> await unitOfWork.TaskService.GetPendings().ToListAsync();
