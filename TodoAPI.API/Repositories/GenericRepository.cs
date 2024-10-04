@@ -15,13 +15,8 @@ public class GenericRepository<T, Tid>(DbContext dbContext) : IGenericRepository
 	public virtual async Task<T?> GetByID(Tid id)
 		=> await Entities.SingleOrDefaultAsync(t => t.ID.Equals(id));
 
-	public virtual IQueryable<T> GetAll(int limit)
-	{
-		if (limit > 0)
-			return Entities.Take(limit);
-
-		return Entities;
-	}
+	public virtual IQueryable<T> GetAll()
+		=> Entities;
 	#endregion
 
 

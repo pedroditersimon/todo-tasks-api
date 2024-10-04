@@ -1,4 +1,5 @@
 ﻿
+using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
 
 namespace TodoAPI.API.Services;
@@ -14,7 +15,8 @@ public class GenericService<T, Tid> : IGenericService<T, Tid>
 
 	public Task<T?> Create(T task) => _repository.Create(task);
 
-	public IQueryable<T> GetAll(int limit = 0) => _repository.GetAll(limit);
+	public IQueryable<T> GetAll(int limit = 0)
+		=> _repository.GetAll().TakeLimit(limit);
 
 	public Task<T?> GetByID(Tid id) => _repository.GetByID(id);
 

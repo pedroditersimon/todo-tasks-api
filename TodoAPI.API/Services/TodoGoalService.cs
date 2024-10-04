@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
 using TodoAPI.Data.Models;
 
@@ -20,21 +21,22 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 			.Include(g => g.Tasks)
 			.SingleOrDefaultAsync(g => g.ID.Equals(id));
 
-	public IQueryable<TodoGoal> GetAllWithTasks(int limit = 50)
-		=> _repository.GetAll().Include(g => g.Tasks);
+	public IQueryable<TodoGoal> GetAllWithTasks(int limit = 0)
+		=> _repository.GetAll()
+			.Include(g => g.Tasks)
+			.TakeLimit(limit);
 
-	public IQueryable<TodoGoal> GetPendings(int limit = 50)
+	public IQueryable<TodoGoal> GetPendings(int limit = 0)
 		=> _repository.GetAll()
 			.Where((g) => g.Tasks.Any(task => !task.IsCompleted))
 			.OrderBy(g => g.ID)
-			.Take(limit);
+			.TakeLimit(limit);
 
-
-	public IQueryable<TodoGoal> GetCompleteds(int limit = 50)
+	public IQueryable<TodoGoal> GetCompleteds(int limit = 0)
 		=> _repository.GetAll()
 			.Where((g) => !g.Tasks.Any(task => !task.IsCompleted))
 			.OrderBy(g => g.ID)
-			.Take(limit);
+			.TakeLimit(limit);
 	#endregion
 
 	#region Update

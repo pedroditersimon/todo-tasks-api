@@ -4,7 +4,7 @@ public interface IGenericRepository<T, Tid>
 {
 	// Get
 	public Task<T?> GetByID(Tid id);
-	public IQueryable<T> GetAll(int limit = 0);
+	public IQueryable<T> GetAll();
 
 	// Create
 	public Task<T?> Create(T task);

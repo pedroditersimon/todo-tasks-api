@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
 using TodoAPI.Data.Models;
 
@@ -19,17 +20,17 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 
 	#region Get
 	public IQueryable<TodoTask> GetPendings(int limit = 0)
-		=> _repository.GetAll(limit)
+		=> _repository.GetAll()
 			.Where((t) => t.IsCompleted == false)
 			.OrderBy(t => t.ID)
-			.Take(limit);
+			.TakeLimit(limit);
 
 
 	public IQueryable<TodoTask> GetCompleteds(int limit = 0)
-			=> _repository.GetAll(limit)
+			=> _repository.GetAll()
 			.Where((t) => t.IsCompleted == true)
 			.OrderBy(t => t.ID)
-			.Take(limit);
+			.TakeLimit(limit);
 
 	#endregion
 
