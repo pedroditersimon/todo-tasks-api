@@ -31,9 +31,11 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
 builder.Services.AddScoped<DbContext, TodoDBContext>();
 
 // configure Repositories to use the PostgreDBService
+builder.Services.AddScoped<ITodoTaskGoalRepository, TodoTaskGoalRepository>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 builder.Services.AddScoped<ITodoGoalRepository, TodoGoalRepository>();
 
+builder.Services.AddScoped<ITodoTaskGoalService, TodoTaskGoalService>();
 builder.Services.AddScoped<ITodoGoalService, TodoGoalService>();
 builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 
