@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoAPI.API", "TodoAPI.API\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{1B9E3BA4-BA66-4BD0-820F-473B5E79B71E}"
 	ProjectSection(SolutionItems) = preProject
-		endpoints.md = endpoints.md
 		README.md = README.md
+		todo.txt = todo.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoAPI.Data", "TodoAPI.Data\TodoAPI.Data.csproj", "{945383B1-47FE-452D-82C3-1E1E7EA62B47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TodoAPI.Data", "TodoAPI.Data\TodoAPI.Data.csproj", "{945383B1-47FE-452D-82C3-1E1E7EA62B47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
