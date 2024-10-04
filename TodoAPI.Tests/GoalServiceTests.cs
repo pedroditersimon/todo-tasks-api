@@ -3,7 +3,7 @@ using Xunit;
 
 namespace TodoAPI.Tests;
 
-public class TaskServiceTests
+public class GoalServiceTests
 {
 	[Fact]
 	public async Task GoalIsCompletedStatusUpdated_WhenTaskIsCompleted()
