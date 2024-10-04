@@ -17,5 +17,6 @@ public interface ITodoGoalService : IGenericService<TodoGoal, int>
 	public Task<bool> AddTask(int goalID, TodoTask task);
 	public Task<bool> RemoveTask(int goalID, int taskID);
 
+	public Task<bool> UpdateAllCompletedStatusByTask(int taskID);
 	public Task<bool> UpdateCompletedStatus(int goalID);
 }

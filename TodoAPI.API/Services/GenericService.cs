@@ -24,5 +24,5 @@ public class GenericService<T, Tid> : IGenericService<T, Tid>
 
 	public Task<bool> SoftDelete(Tid id) => _repository.SoftDelete(id);
 
-	public Task<T?> Update(T task) => _repository.Update(task);
+	public virtual Task<T?> Update(T task) => _repository.Update(task);
 }

@@ -9,12 +9,14 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 {
 	readonly TodoDBContext _dbContext;
 	readonly ITodoTaskRepository _repository;
+	readonly ITodoGoalService _goalService;
 
-	public TodoTaskService(TodoDBContext dBContext, ITodoTaskRepository repository)
+	public TodoTaskService(TodoDBContext dBContext, ITodoTaskRepository repository, ITodoGoalService goalService)
 		: base(repository)
 	{
 		_dbContext = dBContext;
 		_repository = repository;
+		_goalService = goalService;
 	}
 
 
@@ -36,6 +38,20 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 
 
 	#region Update
+	public override async Task<TodoTask?> Update(TodoTask task)
+	{
+		TodoTask? updatedTask = await base.Update(task);
+		if (updatedTask == null)
+			return null;
+
+		// every a task is updated, recalculate goals completed status
+		bool successUpdatedStatus = await _goalService.UpdateAllCompletedStatusByTask(updatedTask.ID);
+		if (!successUpdatedStatus)
+			return null;
+
+		return updatedTask;
+	}
+
 	public async Task<TodoTask?> SetCompleted(int id, bool completed)
 	{
 		TodoTask? task = await GetByID(id);
