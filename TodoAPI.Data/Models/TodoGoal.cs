@@ -8,5 +8,5 @@ public class TodoGoal : EntityBaseModel<int>
 	public bool IsCompleted { get; set; }
 	public bool IsFavorite { get; set; }
 
-	public virtual ICollection<TodoTask> Tasks { get; set; }
+	public ICollection<TodoTaskGoal> TodoTaskGoal { get; set; }
 }
