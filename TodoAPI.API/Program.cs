@@ -34,8 +34,8 @@ builder.Services.AddScoped<DbContext, TodoDBContext>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 builder.Services.AddScoped<ITodoGoalRepository, TodoGoalRepository>();
 
-builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 builder.Services.AddScoped<ITodoGoalService, TodoGoalService>();
+builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
