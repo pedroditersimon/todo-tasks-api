@@ -26,7 +26,7 @@ namespace TodoAPI.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TodoAPI.API.Models.TodoGoal", b =>
+            modelBuilder.Entity("TodoAPI.Data.Models.TodoGoal", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace TodoAPI.API.Migrations
                     b.ToTable("Goals");
                 });
 
-            modelBuilder.Entity("TodoAPI.API.Models.TodoTask", b =>
+            modelBuilder.Entity("TodoAPI.Data.Models.TodoTask", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -93,14 +93,14 @@ namespace TodoAPI.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("TodoAPI.API.Models.TodoTask", b =>
+            modelBuilder.Entity("TodoAPI.Data.Models.TodoTask", b =>
                 {
-                    b.HasOne("TodoAPI.API.Models.TodoGoal", null)
+                    b.HasOne("TodoAPI.Data.Models.TodoGoal", null)
                         .WithMany("Tasks")
                         .HasForeignKey("TodoGoalID");
                 });
 
-            modelBuilder.Entity("TodoAPI.API.Models.TodoGoal", b =>
+            modelBuilder.Entity("TodoAPI.Data.Models.TodoGoal", b =>
                 {
                     b.Navigation("Tasks");
                 });

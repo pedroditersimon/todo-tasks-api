@@ -1,4 +1,4 @@
-﻿using TodoAPI.API.Models;
+﻿using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Repositories;
 

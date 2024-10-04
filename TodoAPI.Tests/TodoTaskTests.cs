@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TodoAPI.API.Models;
+using TodoAPI.Data.Models;
 using TodoAPI.API.Repositories;
 using TodoAPI.API.Services;
 using Xunit;

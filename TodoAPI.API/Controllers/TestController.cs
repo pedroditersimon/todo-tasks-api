@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using TodoAPI.API.Models;
+using TodoAPI.Data.Models;
 using TodoAPI.API.Services;
 
 namespace TodoAPI.API.Controllers;

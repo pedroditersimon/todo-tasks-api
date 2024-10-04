@@ -1,4 +1,4 @@
-﻿namespace TodoAPI.API.Models;
+﻿namespace TodoAPI.Data.Models;
 
 public class TodoGoal : EntityBaseModel<int>
 {

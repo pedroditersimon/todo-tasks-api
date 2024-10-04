@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TodoAPI.API.Models;
+using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Migrations.Seeds;
 

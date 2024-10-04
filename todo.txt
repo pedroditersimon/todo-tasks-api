@@ -1,0 +1,3 @@
+Todo:
+- Agregar propiedad de "favorito" a las tareas y goals
+- Devolver los goals con un campo calculado de si todas sus tareas estan completadas
