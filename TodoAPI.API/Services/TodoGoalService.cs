@@ -28,13 +28,19 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 
 	public IQueryable<TodoGoal> GetPendings(int limit = 0)
 		=> _repository.GetAll()
-			.Where((g) => g.Tasks.Any(task => !task.IsCompleted))
+			.Where((g) => g.Tasks.Any(t => !t.IsCompleted))
 			.OrderBy(g => g.ID)
 			.TakeLimit(limit);
 
 	public IQueryable<TodoGoal> GetCompleteds(int limit = 0)
 		=> _repository.GetAll()
-			.Where((g) => !g.Tasks.Any(task => !task.IsCompleted))
+			.Where((g) => !g.Tasks.Any(t => !t.IsCompleted))
+			.OrderBy(g => g.ID)
+			.TakeLimit(limit);
+
+	public IQueryable<TodoGoal> GetAllByTask(int taskID, int limit = 0)
+		=> _repository.GetAll()
+			.Where((g) => g.Tasks.Any(t => t.ID.Equals(taskID)))
 			.OrderBy(g => g.ID)
 			.TakeLimit(limit);
 	#endregion
@@ -47,6 +53,11 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 			return false;
 
 		goal.Tasks.Add(task);
+
+		bool successUpdatedStatus = await UpdateCompletedStatus(goalID);
+		if (!successUpdatedStatus)
+			return false;
+
 		return true;
 	}
 
@@ -60,7 +71,32 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 		if (task == null)
 			return false;
 
-		return goal.Tasks.Remove(task);
+		bool removed = goal.Tasks.Remove(task);
+		if (!removed)
+			return false;
+
+		bool successUpdatedStatus = await UpdateCompletedStatus(goalID);
+		if (!successUpdatedStatus)
+			return false;
+
+		return true;
+	}
+
+
+	public async Task<bool> UpdateAllCompletedStatusByTask(int taskID)
+	{
+		List<TodoGoal> goals = await GetAllByTask(taskID).ToListAsync();
+		foreach (var goal in goals)
+		{
+			goal.IsCompleted = goal.Tasks.All((t) => t.IsCompleted);
+
+			// update (this dosnt save)
+			TodoGoal? updatedGoal = await Update(goal);
+			if (updatedGoal == null)
+				return false;
+		}
+
+		return true;
 	}
 
 	public async Task<bool> UpdateCompletedStatus(int goalID)
@@ -77,6 +113,8 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 
 		return true;
 	}
+
+
 	#endregion
 
 }

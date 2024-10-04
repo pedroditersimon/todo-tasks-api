@@ -86,10 +86,6 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 		if (!success)
 			return Conflict();
 
-		bool successUpdatedStatus = await unitOfWork.GoalService.UpdateCompletedStatus(goalID);
-		if (!successUpdatedStatus)
-			return Conflict();
-
 		// save
 		bool saved = await unitOfWork.Save() > 0;
 		if (!saved)
@@ -108,10 +104,6 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		bool successRemoved = await unitOfWork.GoalService.RemoveTask(goalID, taskID);
 		if (!successRemoved)
-			return Conflict();
-
-		bool successUpdatedStatus = await unitOfWork.GoalService.UpdateCompletedStatus(goalID);
-		if (!successUpdatedStatus)
 			return Conflict();
 
 		// save

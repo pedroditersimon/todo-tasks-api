@@ -11,6 +11,8 @@ public interface ITodoGoalService : IGenericService<TodoGoal, int>
 	public IQueryable<TodoGoal> GetPendings(int limit = 0);
 	public IQueryable<TodoGoal> GetCompleteds(int limit = 0);
 
+	public IQueryable<TodoGoal> GetAllByTask(int taskID, int limit = 0);
+
 	// Update
 	public Task<bool> AddTask(int goalID, TodoTask task);
 	public Task<bool> RemoveTask(int goalID, int taskID);
