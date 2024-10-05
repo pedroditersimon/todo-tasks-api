@@ -1,5 +1,11 @@
+
 Todo:
-- Devolver los goals con un campo calculado de si todas sus tareas estan completadas
+- recalcular el goal estado solo cuando el IsCompleted de la tarea se actualizo
+- agregar tests al completedPercent, y al eliminar la relacion de task goal
+
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals
+- Devolver los goals con un campo calculado de si todas sus tareas estan completadas
+- Cuando se elimina un task, eliminar tambien la relacion con goals y recalcular su estado
+- Agregar porcentaje de completado para goals

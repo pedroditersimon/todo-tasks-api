@@ -20,9 +20,9 @@ public class GenericService<T, Tid> : IGenericService<T, Tid>
 
 	public Task<T?> GetByID(Tid id) => _repository.GetByID(id);
 
-	public Task<bool> HardDelete(Tid id) => _repository.HardDelete(id);
+	public virtual Task<bool> HardDelete(Tid id) => _repository.HardDelete(id);
 
-	public Task<bool> SoftDelete(Tid id) => _repository.SoftDelete(id);
+	public virtual Task<bool> SoftDelete(Tid id) => _repository.SoftDelete(id);
 
 	public virtual Task<T?> Update(T task) => _repository.Update(task);
 }

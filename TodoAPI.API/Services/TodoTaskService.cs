@@ -96,6 +96,55 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 	}
 	#endregion
 
+
+	#region Delete
+	public async Task<bool> DissociateGoalsByTask(int taskID)
+	{
+		// get goals associated with this task
+		List<TodoGoal> goals = await _taskGoalService.GetGoalsByTaskID(taskID).ToListAsync();
+
+		// Remove associations
+		foreach (var g in goals)
+		{
+			bool success = await _taskGoalService.Dissociate(taskID, g.ID);
+			if (!success)
+				return false;
+		}
+
+		// recalculate goals status
+		foreach (var g in goals)
+		{
+			bool success = await _goalService.UpdateCompletedStatus(g.ID);
+			if (!success)
+				return false;
+		}
+
+		return true;
+	}
+
+
+	public override async Task<bool> HardDelete(int id)
+	{
+		bool success = await DissociateGoalsByTask(id);
+		if (!success)
+			return false;
+
+		// delete
+		return await base.HardDelete(id);
+	}
+
+	public override async Task<bool> SoftDelete(int id)
+	{
+		bool success = await DissociateGoalsByTask(id);
+		if (!success)
+			return false;
+
+		// delete
+		return await base.SoftDelete(id);
+	}
+	#endregion
+
+
 	#region RawSQL Test
 	public async Task<TodoTask?> RawSQL_GetById(int id)
 		=> await _dbContext.Database

@@ -92,7 +92,21 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 		if (tasks.Count == 0)
 			return true;
 
-		goal.IsCompleted = tasks.All((t) => t.IsCompleted);
+		// calculate goal completed percent
+		if (tasks.Count > 0)
+		{
+			int completedTasksCount = tasks.Count(t => t.IsCompleted);
+			float percent = completedTasksCount / (float)tasks.Count;
+			goal.CompletedPercent = MathF.Truncate(percent * 100);
+		}
+		else
+		{
+			goal.CompletedPercent = 0;
+		}
+
+		// calculate goal completed status
+		goal.IsCompleted = goal.CompletedPercent >= 100.0f;
+
 
 		TodoGoal? updatedGoal = await Update(goal);
 		if (updatedGoal == null)
