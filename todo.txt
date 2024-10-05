@@ -2,6 +2,7 @@
 Todo:
 - recalcular el goal estado solo cuando el IsCompleted de la tarea se actualizo
 - agregar tests al completedPercent, y al eliminar la relacion de task goal
+- arreglar referencia ciclica de TodoTaskGoal, al agregar un task a un goal
 
 
 Done:
