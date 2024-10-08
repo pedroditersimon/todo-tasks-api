@@ -1,8 +1,7 @@
-﻿namespace TodoAPI.Data.DTOs.TodoTask;
+﻿namespace TodoAPI.Data.DTOs.TodoGoal;
 
-public class TaskResponse
+public class GoalResponse
 {
-	// base model
 	public int ID { get; set; }
 
 
@@ -14,6 +13,9 @@ public class TaskResponse
 	public string? Description { get; set; }
 
 
+	// calculated field
 	public bool IsCompleted { get; set; }
+	public float CompletedPercent { get; set; } // in 0 to 100 range
+
 	public bool IsFavorite { get; set; }
 }

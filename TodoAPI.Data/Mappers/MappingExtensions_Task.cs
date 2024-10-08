@@ -4,7 +4,7 @@ using TodoAPI.Data.Models;
 
 namespace TodoAPI.Data.Mappers;
 
-public static class MappingExtensions
+public static partial class MappingExtensions
 {
 
 	// CreateTaskRequest -> TodoTask

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TodoAPI.Data.DTOs.TodoGoal;
 using TodoAPI.Data.DTOs.TodoTask;
 using TodoAPI.Data.Models;
 
@@ -10,6 +11,11 @@ public class MappingProfile : Profile
 	public MappingProfile()
 	{
 		CreateMap<CreateTaskRequest, TodoTask>();
+		CreateMap<UpdateTaskRequest, TodoGoal>();
 		CreateMap<TodoTask, TaskResponse>();
+
+		CreateMap<CreateGoalRequest, TodoGoal>();
+		CreateMap<UpdateGoalRequest, TodoGoal>();
+		CreateMap<TodoGoal, GoalResponse>();
 	}
 }
