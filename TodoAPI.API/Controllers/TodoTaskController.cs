@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Services;
+using TodoAPI.Data.DTOs.TodoTask;
+using TodoAPI.Data.Mappers;
 using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Controllers;
@@ -12,40 +14,46 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 
 
 	[HttpGet]
-	public async Task<ActionResult<List<TodoTask>>> GetAll()
-		=> await unitOfWork.TaskService.GetAll().ToListAsync();
+	public async Task<ActionResult<List<TaskResponse>>> GetAll()
+		=> await unitOfWork.TaskService.GetAll()
+			.Select(t => t.ToResponse(unitOfWork.Mapper)).ToListAsync();
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<TodoTask>> GetByID(int id)
+	public async Task<ActionResult<TaskResponse>> GetByID(int id)
 	{
 		TodoTask? task = await unitOfWork.TaskService.GetByID(id);
 		if (task == null)
 			return NotFound();
 
-		return task;
+		return task.ToResponse(unitOfWork.Mapper);
 	}
 
-	[HttpGet(nameof(GetAllByTask))]
-	public async Task<ActionResult<List<TodoTask>>> GetAllByTask(int goalID)
+	[HttpGet(nameof(GetAllByGoal))]
+	public async Task<ActionResult<List<TaskResponse>>> GetAllByGoal(int goalID)
 	{
 		TodoGoal? goal = await unitOfWork.GoalRepository.GetByID(goalID);
 		if (goal == null)
 			return NotFound();
 
-		return await unitOfWork.TaskService.GetAllByGoal(goalID).ToListAsync();
+		return await unitOfWork.TaskService.GetAllByGoal(goalID)
+			.Select(t => t.ToResponse(unitOfWork.Mapper)).ToListAsync();
 	}
 
 	[HttpGet(nameof(GetPendings))]
-	public async Task<ActionResult<List<TodoTask>>> GetPendings()
-		=> await unitOfWork.TaskService.GetPendings().ToListAsync();
+	public async Task<ActionResult<List<TaskResponse>>> GetPendings()
+		=> await unitOfWork.TaskService.GetPendings()
+		.Select(t => t.ToResponse(unitOfWork.Mapper)).ToListAsync();
 
 	[HttpGet(nameof(GetCompleteds))]
-	public async Task<ActionResult<List<TodoTask>>> GetCompleteds()
-		=> await unitOfWork.TaskService.GetCompleteds().ToListAsync();
+	public async Task<ActionResult<List<TaskResponse>>> GetCompleteds()
+		=> await unitOfWork.TaskService.GetCompleteds()
+		.Select(t => t.ToResponse(unitOfWork.Mapper)).ToListAsync();
 
 	[HttpPost]
-	public async Task<ActionResult<TodoTask?>> Create(TodoTask task)
+	public async Task<ActionResult<TaskResponse?>> Create(CreateTaskRequest createTaskRequest)
 	{
+		TodoTask task = createTaskRequest.ToTask(unitOfWork.Mapper);
+
 		TodoTask? createdTask = await unitOfWork.TaskService.Create(task);
 		if (createdTask == null)
 			return Conflict();
@@ -54,13 +62,15 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 		if (!saved)
 			return Conflict();
 
-		return createdTask;
+		return createdTask.ToResponse(unitOfWork.Mapper);
 	}
 
 
 	[HttpPut]
-	public async Task<ActionResult<TodoTask>> Update(TodoTask task)
+	public async Task<ActionResult<TaskResponse>> Update(UpdateTaskRequest updateTaskRequest)
 	{
+		TodoTask task = updateTaskRequest.ToTask(unitOfWork.Mapper);
+
 		TodoTask? updatedTask = await unitOfWork.TaskService.Update(task);
 		if (updatedTask == null)
 			return NotFound();
@@ -75,11 +85,11 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 		if (!saved)
 			return Conflict();
 
-		return updatedTask;
+		return updatedTask.ToResponse(unitOfWork.Mapper);
 	}
 
 	[HttpPut(nameof(SetCompleted))]
-	public async Task<ActionResult<TodoTask>> SetCompleted(int id, bool completed)
+	public async Task<ActionResult<TaskResponse>> SetCompleted(int id, bool completed)
 	{
 		TodoTask? updatedTask = await unitOfWork.TaskService.SetCompleted(id, completed);
 		if (updatedTask == null)
@@ -89,7 +99,7 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 		if (!saved)
 			return Conflict();
 
-		return updatedTask;
+		return updatedTask.ToResponse(unitOfWork.Mapper);
 	}
 
 	[HttpDelete("{id}")]

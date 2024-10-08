@@ -5,6 +5,7 @@ Todo:
 - filtrar y ordenar por favoritos y completados, ademas que sea opcional
 - Agregar DTOs o alguna forma de eliminar propiedades a los inputs y outputs de los controladores
 - (?) arreglar referencia ciclica de TodoTaskGoal, al agregar un task a un goal
+- envolver todas las respuestas en un Ok();
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals
