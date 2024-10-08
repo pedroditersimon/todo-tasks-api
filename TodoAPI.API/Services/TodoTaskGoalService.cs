@@ -15,7 +15,8 @@ public class TodoTaskGoalService : ITodoTaskGoalService
 		_repository = repository;
 	}
 
-
+	public Task<TodoTaskGoal?> GetByID(int taskID, int goalID)
+		=> _repository.GetByID(taskID, goalID);
 
 	public IQueryable<TodoTaskGoal> GetByGoalID(int goalID, int limit = 0)
 		=> _repository.GetAll()
