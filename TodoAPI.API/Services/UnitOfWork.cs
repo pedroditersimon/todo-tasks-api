@@ -19,9 +19,11 @@ public class UnitOfWork : IUnitOfWork
 	public ITodoTaskService TaskService { get; }
 	public ITodoGoalService GoalService { get; }
 
+	public ITodoTaskGoalService TaskGoalService { get; }
+
 	public UnitOfWork(TodoDBContext dbContext, IMapper mapper,
 		ITodoTaskRepository taskRepository, ITodoGoalRepository goalRepository,
-		ITodoTaskService taskService, ITodoGoalService goalService)
+		ITodoTaskService taskService, ITodoGoalService goalService, ITodoTaskGoalService taskGoalService)
 	{
 		_dbContext = dbContext;
 		Mapper = mapper;
@@ -31,6 +33,7 @@ public class UnitOfWork : IUnitOfWork
 
 		TaskService = taskService;
 		GoalService = goalService;
+		TaskGoalService = taskGoalService;
 	}
 
 	public async Task<int> Save()

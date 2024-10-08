@@ -15,5 +15,7 @@ public interface IUnitOfWork : IDisposable
 	public ITodoTaskService TaskService { get; }
 	public ITodoGoalService GoalService { get; }
 
+	public ITodoTaskGoalService TaskGoalService { get; }
+
 	public Task<int> Save();
 }

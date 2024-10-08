@@ -33,9 +33,9 @@ public static class TestsHelper
 			cfg.AddProfile(new MappingProfile());
 		}));
 
-		return new UnitOfWork(dbContext, taskRepository, goalRepository,
-			taskService, goalService, taskGoalService,
-			mapper);
+		return new UnitOfWork(dbContext, mapper,
+			taskRepository, goalRepository,
+			taskService, goalService, taskGoalService);
 	}
 
 }
