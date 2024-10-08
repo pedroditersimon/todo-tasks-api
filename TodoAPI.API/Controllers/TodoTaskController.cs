@@ -88,7 +88,7 @@ public class TodoTaskController(IUnitOfWork unitOfWork) : ControllerBase
 		return updatedTask.ToResponse(unitOfWork.Mapper);
 	}
 
-	[HttpPut(nameof(SetCompleted))]
+	[HttpPatch(nameof(SetCompleted))]
 	public async Task<ActionResult<TaskResponse>> SetCompleted(int id, bool completed)
 	{
 		TodoTask? updatedTask = await unitOfWork.TaskService.SetCompleted(id, completed);
