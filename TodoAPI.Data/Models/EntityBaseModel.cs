@@ -9,6 +9,7 @@ public class EntityBaseModel<Tid>
 	public DateTime CreationDate { get; set; }
 
 	public bool IsDeleted { get; set; }
+	public DateTime LastDeletedTime { get; set; }
 
 	[ConcurrencyCheck]
 	public DateTime LastUpdatedTime { get; set; }

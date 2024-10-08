@@ -41,6 +41,9 @@ builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddAutoMapper(typeof(TodoAPI.Data.Mappers.MappingProfile));
+
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
