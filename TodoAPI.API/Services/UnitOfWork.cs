@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Repositories;
 
@@ -8,6 +9,8 @@ public class UnitOfWork : IUnitOfWork
 {
 	readonly TodoDBContext _dbContext;
 
+	public IMapper Mapper { get; }
+
 	// repositories
 	public ITodoTaskRepository TaskRepository { get; }
 	public ITodoGoalRepository GoalRepository { get; }
@@ -16,11 +19,12 @@ public class UnitOfWork : IUnitOfWork
 	public ITodoTaskService TaskService { get; }
 	public ITodoGoalService GoalService { get; }
 
-	public UnitOfWork(TodoDBContext dbContext,
+	public UnitOfWork(TodoDBContext dbContext, IMapper mapper,
 		ITodoTaskRepository taskRepository, ITodoGoalRepository goalRepository,
 		ITodoTaskService taskService, ITodoGoalService goalService)
 	{
 		_dbContext = dbContext;
+		Mapper = mapper;
 
 		TaskRepository = taskRepository;
 		GoalRepository = goalRepository;
