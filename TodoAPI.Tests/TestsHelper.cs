@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Repositories;
 using TodoAPI.API.Services;
+using TodoAPI.Data.Mappers;
 
 namespace TodoAPI.Tests;
 
@@ -26,7 +28,14 @@ public static class TestsHelper
 		ITodoGoalService goalService = new TodoGoalService(goalRepository, taskGoalService);
 		ITodoTaskService taskService = new TodoTaskService(dbContext, taskRepository, goalService, taskGoalService);
 
-		return new UnitOfWork(dbContext, taskRepository, goalRepository, taskService, goalService);
+		IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
+		{
+			cfg.AddProfile(new MappingProfile());
+		}));
+
+		return new UnitOfWork(dbContext, taskRepository, goalRepository,
+			taskService, goalService, taskGoalService,
+			mapper);
 	}
 
 }
