@@ -20,7 +20,11 @@ public class GenericRepository<T, Tid>(DbContext dbContext) : IGenericRepository
 
 
 	#region Create
-	public virtual async Task<T?> Create(T entity) => Entities.Add(entity).Entity;
+	public virtual async Task<T?> Create(T entity)
+	{
+		entity.CreationDate = DateTime.UtcNow;
+		return Entities.Add(entity).Entity;
+	}
 	#endregion
 
 
@@ -42,6 +46,7 @@ public class GenericRepository<T, Tid>(DbContext dbContext) : IGenericRepository
 			return false;
 
 		entity.IsDeleted = true;
+		entity.LastDeletedTime = DateTime.UtcNow;
 		await Update(entity);
 
 		return true;
