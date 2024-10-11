@@ -7,12 +7,12 @@ public interface IGenericRepository<T, Tid>
 	public IQueryable<T> GetAll();
 
 	// Create
-	public Task<T?> Create(T task);
+	public Task<T?> Create(T entity);
 
 	// Delete
 	public Task<bool> SoftDelete(Tid id);
 	public Task<bool> HardDelete(Tid id);
 
 	// Update
-	public Task<T?> Update(T task);
+	public Task<T?> Update(T entity);
 }

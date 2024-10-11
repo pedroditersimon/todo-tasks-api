@@ -12,10 +12,12 @@ public class GenericRepository<T, Tid>(DbContext dbContext) : IGenericRepository
 
 
 	#region Get
+
 	public virtual async Task<T?> GetByID(Tid id)
 		=> await Entities.SingleOrDefaultAsync(t => t.ID.Equals(id));
 
-	public virtual IQueryable<T> GetAll() => Entities;
+	public virtual IQueryable<T> GetAll()
+		=> Entities;
 	#endregion
 
 
