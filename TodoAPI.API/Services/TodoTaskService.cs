@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
+using TodoAPI.Data.Events.Task;
 using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Services;
@@ -10,18 +11,20 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 	readonly TodoDBContext _dbContext;
 	readonly ITodoTaskRepository _repository;
 
-	readonly ITodoGoalService _goalService;
 	readonly ITodoTaskGoalService _taskGoalService;
 
+	// Events
+	public event EventHandler<TaskIsDeletedEventArgs> OnTaskIsDeleted;
+	public event EventHandler<TaskIsUpdatedEventArgs> OnTaskIsUpdated;
+
+
 	public TodoTaskService(TodoDBContext dBContext,
-		ITodoTaskRepository repository,
-		ITodoGoalService goalService, ITodoTaskGoalService taskGoalService)
+		ITodoTaskRepository repository, ITodoTaskGoalService taskGoalService)
 		: base(repository)
 	{
 		_dbContext = dBContext;
 		_repository = repository;
 
-		_goalService = goalService;
 		_taskGoalService = taskGoalService;
 	}
 
@@ -53,10 +56,7 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 		if (updatedTask == null)
 			return null;
 
-		// every a task is updated, recalculate goals completed status
-		bool successUpdatedStatus = await _goalService.UpdateAllCompletedStatusByTask(updatedTask.ID);
-		if (!successUpdatedStatus)
-			return null;
+		OnTaskIsUpdated(this, new TaskIsUpdatedEventArgs(task.ID, task.IsCompleted));
 
 		return updatedTask;
 	}
@@ -98,49 +98,33 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 
 
 	#region Delete
-	public async Task<bool> DissociateGoalsByTask(int taskID)
-	{
-		// get goals associated with this task
-		List<TodoGoal> goals = await _taskGoalService.GetGoalsByTaskID(taskID).ToListAsync();
-
-		// Remove associations
-		foreach (var g in goals)
-		{
-			bool success = await _taskGoalService.Dissociate(taskID, g.ID);
-			if (!success)
-				return false;
-		}
-
-		// recalculate goals status
-		foreach (var g in goals)
-		{
-			bool success = await _goalService.UpdateCompletedStatus(g.ID);
-			if (!success)
-				return false;
-		}
-
-		return true;
-	}
-
 
 	public override async Task<bool> HardDelete(int id)
 	{
-		bool success = await DissociateGoalsByTask(id);
+		// delete
+		bool success = await base.HardDelete(id);
 		if (!success)
 			return false;
 
-		// delete
-		return await base.HardDelete(id);
+		OnTaskIsDeleted(this, new TaskIsDeletedEventArgs(id));
+		return true;
 	}
 
 	public override async Task<bool> SoftDelete(int id)
 	{
+		/*
 		bool success = await DissociateGoalsByTask(id);
 		if (!success)
 			return false;
+		*/
 
 		// delete
-		return await base.SoftDelete(id);
+		bool success = await base.SoftDelete(id);
+		if (!success)
+			return false;
+
+		OnTaskIsDeleted?.Invoke(this, new TaskIsDeletedEventArgs(id));
+		return true;
 	}
 	#endregion
 
