@@ -22,7 +22,7 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 
-	[HttpPost(nameof(GetByID) + "{id}")]
+	[HttpPost(nameof(GetByID) + "/{id}")]
 	public async Task<ActionResult<GoalResponse>> GetByID(int id)
 	{
 		TodoGoal? goal = await unitOfWork.GoalService.GetByID(id);
