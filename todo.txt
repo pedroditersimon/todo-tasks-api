@@ -1,9 +1,8 @@
 
 Todo:
-- recalcular el goal estado solo cuando el IsCompleted de la tarea ha cambiado
+- recalcular el goal estado unicamente cuando el IsCompleted de la tarea ha cambiado
 - filtrar y ordenar por favoritos y completados, ademas que sea opcional
 - (necesario?) envolver todas las respuestas en un Ok();
-- añadir los nuevos methodos a la interfaces
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals

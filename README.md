@@ -1,5 +1,5 @@
 # TodoTasks
-API backend desarrollada en ASP.Net C# utilizando EntityFramework, diseñada para gestionar un sistema simple de tareas y objetivos.
+API backend desarrollada en ASP.Net C# utilizando EntityFramework, diseñada para gestionar un sistema simple de tareas y objetivos.  
 Este es un proyecto de practica para implementar el desarrollo basico de un sistema backend en .Net.
 
 ## Conocimientos adquiridos
@@ -17,6 +17,8 @@ Resumen de los conocimientos nuevos que adquirí y apliqué en el sistema:
 - Propiedades 'Navigators' de EntityFramework.
 - Tests unitarios.
 - Transaction (rollback y commit)
+- DTOs y mappers
+- Eventos y AsyncEvents
 
 ## Mención y agradecimiento
 Tomé riendas gracias a el [Curso de EntityFramework de NetMentor](https://youtube.com/playlist?list=PLesmOrW3mp4i2RdfsPI5R6o5EVacGuovz&si=kRphA8p3ITI40upE) en Youtube.  
