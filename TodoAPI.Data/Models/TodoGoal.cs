@@ -5,9 +5,12 @@ public class TodoGoal : EntityBaseModel<int>
 	public string? Name { get; set; }
 	public string? Description { get; set; }
 
-	// calculated field
+
+	// Calculated Fields
+	public bool NeedsToUpdateCompletedStatus { get; set; }
 	public bool IsCompleted { get; set; }
-	public float CompletedPercent { get; set; } // in 0 to 100 range
+	public float CompletedPercent { get; set; } // 0 to 100 range
+
 
 	public bool IsFavorite { get; set; }
 
