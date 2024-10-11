@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
+using TodoAPI.Data.Events;
 using TodoAPI.Data.Events.Task;
 using TodoAPI.Data.Models;
 
@@ -14,8 +15,8 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 	readonly ITodoTaskGoalService _taskGoalService;
 
 	// Events
-	public event EventHandler<TaskIsDeletedEventArgs> OnTaskIsDeleted;
-	public event EventHandler<TaskIsUpdatedEventArgs> OnTaskIsUpdated;
+	public event AsyncEventHandler<TaskIsDeletedEventArgs> OnTaskIsDeleted;
+	public event AsyncEventHandler<TaskIsUpdatedEventArgs> OnTaskIsUpdated;
 
 
 	public TodoTaskService(TodoDBContext dBContext,
@@ -56,8 +57,7 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 		if (updatedTask == null)
 			return null;
 
-		OnTaskIsUpdated(this, new TaskIsUpdatedEventArgs(task.ID, task.IsCompleted));
-
+		await OnTaskIsUpdated(this, new TaskIsUpdatedEventArgs(task.ID, task.IsCompleted));
 		return updatedTask;
 	}
 
@@ -106,7 +106,7 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 		if (!success)
 			return false;
 
-		OnTaskIsDeleted(this, new TaskIsDeletedEventArgs(id));
+		await OnTaskIsDeleted(this, new TaskIsDeletedEventArgs(id));
 		return true;
 	}
 
@@ -123,7 +123,7 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 		if (!success)
 			return false;
 
-		OnTaskIsDeleted?.Invoke(this, new TaskIsDeletedEventArgs(id));
+		await OnTaskIsDeleted(this, new TaskIsDeletedEventArgs(id));
 		return true;
 	}
 	#endregion

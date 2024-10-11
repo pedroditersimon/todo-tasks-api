@@ -36,23 +36,23 @@ public class GoalCompletedStatusService : IGoalCompletedStatusService
 
 
 	#region Events
-	private async void OnDissociateTaskGoal(object? sender, DissociateEventArgs e)
+	private async Task OnDissociateTaskGoal(object? sender, DissociateEventArgs e)
 	{
 		bool success = await MarkForUpdate(e.GoalID);
 	}
 
-	private async void OnAssociateTaskGoal(object? sender, AssociateEventArgs e)
+	private async Task OnAssociateTaskGoal(object? sender, AssociateEventArgs e)
 	{
 		bool success = await MarkForUpdate(e.GoalID);
 	}
 
-	private async void OnTaskIsDeleted(object? sender, TaskIsDeletedEventArgs e)
+	private async Task OnTaskIsDeleted(object? sender, TaskIsDeletedEventArgs e)
 	{
 		// this will trigger OnDissociateTaskGoal of every goal
 		bool success = await _taskGoalService.DissociateAllByTaskID(e.TaskID);
 	}
 
-	private async void OnTaskIsUpdated(object? sender, TaskIsUpdatedEventArgs e)
+	private async Task OnTaskIsUpdated(object? sender, TaskIsUpdatedEventArgs e)
 	{
 		List<TodoGoal> goals = await _taskGoalService.GetGoalsByTaskID(e.TaskID).ToListAsync();
 		foreach (var g in goals)

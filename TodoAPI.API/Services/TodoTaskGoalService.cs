@@ -3,6 +3,7 @@ using TodoAPI.API.Extensions;
 using TodoAPI.API.Repositories;
 using TodoAPI.Data.Events.TaskGoal;
 using TodoAPI.Data.Models;
+using TodoAPI.Data.Events;
 
 namespace TodoAPI.API.Services;
 
@@ -11,8 +12,8 @@ public class TodoTaskGoalService : ITodoTaskGoalService
 
 	readonly ITodoTaskGoalRepository _repository;
 
-	public event EventHandler<AssociateEventArgs> OnAssociate;
-	public event EventHandler<DissociateEventArgs> OnDissociate;
+	public event AsyncEventHandler<AssociateEventArgs> OnAssociate;
+	public event AsyncEventHandler<DissociateEventArgs> OnDissociate;
 
 	public TodoTaskGoalService(ITodoTaskGoalRepository repository)
 	{
@@ -60,7 +61,7 @@ public class TodoTaskGoalService : ITodoTaskGoalService
 			return false;
 
 		// trigger event
-		OnAssociate(this, new AssociateEventArgs(goalID, taskID));
+		await OnAssociate(this, new AssociateEventArgs(goalID, taskID));
 		return true;
 	}
 
@@ -75,7 +76,7 @@ public class TodoTaskGoalService : ITodoTaskGoalService
 			return false;
 
 		// trigger event
-		OnDissociate(this, new DissociateEventArgs(goalID, taskID));
+		await OnDissociate(this, new DissociateEventArgs(goalID, taskID));
 		return true;
 	}
 

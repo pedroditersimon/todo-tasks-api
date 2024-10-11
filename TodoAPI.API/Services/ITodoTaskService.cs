@@ -1,4 +1,5 @@
-﻿using TodoAPI.Data.Events.Task;
+﻿using TodoAPI.Data.Events;
+using TodoAPI.Data.Events.Task;
 using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Services;
@@ -23,6 +24,6 @@ public interface ITodoTaskService : IGenericService<TodoTask, int>
 	public Task<TodoTask?> StoredProcedure_GetByID(int id);
 
 	// Events
-	public event EventHandler<TaskIsDeletedEventArgs> OnTaskIsDeleted;
-	public event EventHandler<TaskIsUpdatedEventArgs> OnTaskIsUpdated;
+	public event AsyncEventHandler<TaskIsDeletedEventArgs> OnTaskIsDeleted;
+	public event AsyncEventHandler<TaskIsUpdatedEventArgs> OnTaskIsUpdated;
 }

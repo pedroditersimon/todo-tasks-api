@@ -1,5 +1,6 @@
 ﻿using TodoAPI.Data.Events.TaskGoal;
 using TodoAPI.Data.Models;
+using TodoAPI.Data.Events;
 
 namespace TodoAPI.API.Services;
 
@@ -24,6 +25,6 @@ public interface ITodoTaskGoalService
 
 
 	// Events
-	public event EventHandler<AssociateEventArgs> OnAssociate;
-	public event EventHandler<DissociateEventArgs> OnDissociate;
+	public event AsyncEventHandler<AssociateEventArgs> OnAssociate;
+	public event AsyncEventHandler<DissociateEventArgs> OnDissociate;
 }
