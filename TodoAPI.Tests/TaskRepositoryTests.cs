@@ -13,11 +13,11 @@ public class TaskRepositoryTests
 		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
 		TodoTaskRepository taskRepository = new(dbContext);
 
-		taskRepository.Create(new TodoTask() { ID = 1 });
+		await taskRepository.Create(new TodoTask() { ID = 1 });
 		await dbContext.SaveChangesAsync();
 
 		TodoTask? task = await taskRepository.GetByID(1);
-		Assert.True(task != null);
+		Assert.NotNull(task);
 	}
 
 
@@ -27,10 +27,41 @@ public class TaskRepositoryTests
 		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
 		TodoTaskRepository taskRepository = new(dbContext);
 
-		taskRepository.Create(new TodoTask() { ID = 1 });
+		await taskRepository.Create(new TodoTask() { ID = 1 });
 		await dbContext.SaveChangesAsync();
 
 		TodoTask? task = await taskRepository.GetByID(2);
-		Assert.True(task == null);
+		Assert.Null(task);
+	}
+
+
+	[Fact]
+	public async void GetByID_NotFound_WhenTaskIsHardDeletedWithoutSaving()
+	{
+		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
+		TodoTaskRepository taskRepository = new(dbContext);
+
+		await taskRepository.Create(new TodoTask() { ID = 1 });
+		await dbContext.SaveChangesAsync();
+
+		await taskRepository.HardDelete(1);
+
+		TodoTask? task = await taskRepository.GetByID(2);
+		Assert.Null(task);
+	}
+
+	[Fact]
+	public async void GetByID_NotFound_WhenTaskIsSoftDeletedWithoutSaving()
+	{
+		using TodoDBContext dbContext = TestsHelper.CreateDBContext();
+		TodoTaskRepository taskRepository = new(dbContext);
+
+		await taskRepository.Create(new TodoTask() { ID = 1 });
+		await dbContext.SaveChangesAsync();
+
+		await taskRepository.SoftDelete(1);
+
+		TodoTask? task = await taskRepository.GetByID(2);
+		Assert.Null(task);
 	}
 }

@@ -1,11 +1,9 @@
 
 Todo:
-- recalcular el goal estado solo cuando el IsCompleted de la tarea se actualizo
-- agregar tests al eliminar la relacion de task goal
+- recalcular el goal estado solo cuando el IsCompleted de la tarea ha cambiado
 - filtrar y ordenar por favoritos y completados, ademas que sea opcional
-- Agregar DTOs o alguna forma de eliminar propiedades a los inputs y outputs de los controladores
-- (?) arreglar referencia ciclica de TodoTaskGoal, al agregar un task a un goal
-- envolver todas las respuestas en un Ok();
+- (necesario?) envolver todas las respuestas en un Ok();
+- añadir los nuevos methodos a la interfaces
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals
@@ -13,3 +11,10 @@ Done:
 - Cuando se elimina un task, eliminar tambien la relacion con goals y recalcular su estado
 - Agregar porcentaje de completado para goals
 - agregar tests al completedPercent
+- Agregar DTOs o alguna forma de eliminar propiedades a los inputs y outputs de los controladores
+- arreglar referencia ciclica de TodoTaskGoal, al agregar un task a un goal
+	solved: se quitó el Lazy Loading Proxies
+- agregar tests al eliminar la relacion de task goal
+- marcar los goals que necesiten actualizarce, y solo actualizarlos al recuperarlos
+- cambiar el metodo de goal controller GET a POST, ya que ejecutan tareas de modificacion
+- Explicar el funcionamiento de GoalCompletedStatusService

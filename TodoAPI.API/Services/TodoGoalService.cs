@@ -1,39 +1,87 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Extensions;
+using TodoAPI.API.Interfaces;
 using TodoAPI.API.Repositories;
+using TodoAPI.Data.Events;
 using TodoAPI.Data.Models;
 
 namespace TodoAPI.API.Services;
 
-public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
+public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService, ISaveable
 {
 	readonly ITodoGoalRepository _repository;
 	readonly ITodoTaskGoalService _taskGoalService;
+	readonly IGoalCompletedStatusService _goalCompletedStatusService;
 
-	public TodoGoalService(ITodoGoalRepository repository, ITodoTaskGoalService taskGoalService)
+	public event AsyncEventHandler<EventArgs> OnSaveChangesRequested;
+
+	public TodoGoalService(ITodoGoalRepository repository, ITodoTaskGoalService taskGoalService,
+		IGoalCompletedStatusService goalCompletedStatusService)
 		: base(repository)
 	{
 		_repository = repository;
 		_taskGoalService = taskGoalService;
+		_goalCompletedStatusService = goalCompletedStatusService;
 	}
 
 	#region Get
 
-	public IQueryable<TodoGoal> GetPendings(int limit = 0)
-		=> _repository.GetAll()
+	public override async Task<TodoGoal?> GetByID(int id)
+	{
+		// before do get all, update goals status
+		bool updated = await _goalCompletedStatusService.UpdateStatusIfGoalNeeds(id);
+		if (updated)
+			if (updated) await OnSaveChangesRequested(this, EventArgs.Empty);
+
+		return await base.GetByID(id);
+	}
+
+	public new async Task<List<TodoGoal>> GetAll(int limit = 0)
+	{
+		// before do get all, update goals status
+		bool updated = await _goalCompletedStatusService.UpdateStatusOfGoalsThatNeeds();
+		if (updated)
+			await OnSaveChangesRequested(this, EventArgs.Empty);
+
+		return await base.GetAll(limit).ToListAsync();
+	}
+
+
+	public async Task<List<TodoGoal>> GetPendings(int limit = 0)
+	{
+		// before do get all, update goals status
+		bool updated = await _goalCompletedStatusService.UpdateStatusOfGoalsThatNeeds();
+		if (updated)
+			await OnSaveChangesRequested(this, EventArgs.Empty);
+
+		return await _repository.GetAll()
 			.Where((g) => !g.IsCompleted)
 			.OrderBy(g => g.ID)
-			.TakeLimit(limit);
+			.TakeLimit(limit).ToListAsync();
+	}
 
-	public IQueryable<TodoGoal> GetCompleteds(int limit = 0)
-		=> _repository.GetAll()
+	public async Task<List<TodoGoal>> GetCompleteds(int limit = 0)
+	{
+		// before do get all, update goals status
+		bool updated = await _goalCompletedStatusService.UpdateStatusOfGoalsThatNeeds();
+		if (updated)
+			await OnSaveChangesRequested(this, EventArgs.Empty);
+
+		return await _repository.GetAll()
 			.Where((g) => g.IsCompleted)
 			.OrderBy(g => g.ID)
-			.TakeLimit(limit);
+			.TakeLimit(limit).ToListAsync();
+	}
 
-	public IQueryable<TodoGoal> GetAllByTask(int taskID, int limit = 0)
-		=> _taskGoalService.GetGoalsByTaskID(taskID, limit);
+	public async Task<List<TodoGoal>> GetAllByTask(int taskID, int limit = 0)
+	{
+		// before do get all, update goals status
+		bool updated = await _goalCompletedStatusService.UpdateStatusOfGoalsThatNeeds();
+		if (updated)
+			await OnSaveChangesRequested(this, EventArgs.Empty);
 
+		return await _taskGoalService.GetGoalsByTaskID(taskID, limit).ToListAsync();
+	}
 	#endregion
 
 	#region Update
@@ -41,10 +89,6 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 	{
 		bool success = await _taskGoalService.Associate(goalID, taskID);
 		if (!success)
-			return false;
-
-		bool successUpdatedStatus = await UpdateCompletedStatus(goalID);
-		if (!successUpdatedStatus)
 			return false;
 
 		return true;
@@ -56,64 +100,9 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService
 		if (!success)
 			return false;
 
-		bool successUpdatedStatus = await UpdateCompletedStatus(goalID);
-		if (!successUpdatedStatus)
-			return false;
-
 		return true;
 	}
 
-
-	public async Task<bool> UpdateAllCompletedStatusByTask(int taskID)
-	{
-		List<TodoGoal> goals = await GetAllByTask(taskID).ToListAsync();
-		foreach (var goal in goals)
-		{
-			bool success = await UpdateCompletedStatus(goal);
-			if (!success)
-				return false;
-		}
-
-		return true;
-	}
-
-	public async Task<bool> UpdateCompletedStatus(int goalID)
-	{
-		TodoGoal? goal = await GetByID(goalID);
-		if (goal == null)
-			return false;
-
-		return await UpdateCompletedStatus(goal);
-	}
-
-	public async Task<bool> UpdateCompletedStatus(TodoGoal goal)
-	{
-		List<TodoTask> tasks = await _taskGoalService.GetTasksByGoalID(goal.ID).ToListAsync();
-		if (tasks.Count == 0)
-			return true;
-
-		// calculate goal completed percent
-		if (tasks.Count > 0)
-		{
-			int completedTasksCount = tasks.Count(t => t.IsCompleted);
-			float percent = completedTasksCount / (float)tasks.Count;
-			goal.CompletedPercent = MathF.Truncate(percent * 100);
-		}
-		else
-		{
-			goal.CompletedPercent = 0;
-		}
-
-		// calculate goal completed status
-		goal.IsCompleted = goal.CompletedPercent >= 100.0f;
-
-
-		TodoGoal? updatedGoal = await Update(goal);
-		if (updatedGoal == null)
-			return false;
-
-		return true;
-	}
 	#endregion
 
 }

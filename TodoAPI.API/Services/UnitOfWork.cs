@@ -34,7 +34,13 @@ public class UnitOfWork : IUnitOfWork
 		TaskService = taskService;
 		GoalService = goalService;
 		TaskGoalService = taskGoalService;
+
+		GoalService.OnSaveChangesRequested += OnSaveChangesRequested;
 	}
+
+	private async Task OnSaveChangesRequested(object? sender, EventArgs e)
+		=> await Save();
+
 
 	public async Task<int> Save()
 	{

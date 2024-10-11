@@ -25,8 +25,9 @@ public static class TestsHelper
 		ITodoTaskGoalRepository taskGoalRepository = new TodoTaskGoalRepository(dbContext);
 
 		ITodoTaskGoalService taskGoalService = new TodoTaskGoalService(taskGoalRepository);
-		ITodoGoalService goalService = new TodoGoalService(goalRepository, taskGoalService);
-		ITodoTaskService taskService = new TodoTaskService(dbContext, taskRepository, goalService, taskGoalService);
+		ITodoTaskService taskService = new TodoTaskService(dbContext, taskRepository, taskGoalService);
+		IGoalCompletedStatusService goalCompletedStatusService = new GoalCompletedStatusService(taskService, goalRepository, taskGoalService);
+		ITodoGoalService goalService = new TodoGoalService(goalRepository, taskGoalService, goalCompletedStatusService);
 
 		IMapper mapper = new Mapper(new MapperConfiguration(cfg =>
 		{

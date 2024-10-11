@@ -38,6 +38,7 @@ builder.Services.AddScoped<ITodoGoalRepository, TodoGoalRepository>();
 builder.Services.AddScoped<ITodoTaskGoalService, TodoTaskGoalService>();
 builder.Services.AddScoped<ITodoGoalService, TodoGoalService>();
 builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
+builder.Services.AddScoped<IGoalCompletedStatusService, GoalCompletedStatusService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

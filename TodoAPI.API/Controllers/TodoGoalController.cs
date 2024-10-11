@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TodoAPI.API.Services;
 using TodoAPI.Data.DTOs.TodoGoal;
 using TodoAPI.Data.Mappers;
@@ -11,14 +10,19 @@ namespace TodoAPI.API.Controllers;
 [Route("Goals")]
 public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 {
+	// Since all retrieval methods modify goals that require an update to their completion status,
+	// the HTTP method should be POST instead of GET according to REST principles
 
-	[HttpGet]
+
+	[HttpPost(nameof(GetAll))]
 	public async Task<ActionResult<List<GoalResponse>>> GetAll()
-		=> await unitOfWork.GoalService.GetAll()
-			.Select(g => g.ToResponse(unitOfWork.Mapper)).ToListAsync();
+	{
+		List<TodoGoal> goals = await unitOfWork.GoalService.GetAll();
+		return goals.Select(g => g.ToResponse(unitOfWork.Mapper)).ToList();
+	}
 
 
-	[HttpGet("{id}")]
+	[HttpPost(nameof(GetByID) + "{id}")]
 	public async Task<ActionResult<GoalResponse>> GetByID(int id)
 	{
 		TodoGoal? goal = await unitOfWork.GoalService.GetByID(id);
@@ -28,28 +32,32 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 		return goal.ToResponse(unitOfWork.Mapper);
 	}
 
-	[HttpGet(nameof(GetAllByTask))]
+	[HttpPost(nameof(GetAllByTask))]
 	public async Task<ActionResult<List<GoalResponse>>> GetAllByTask(int taskID)
 	{
 		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
 		if (task == null)
 			return NotFound();
 
-		return await unitOfWork.GoalService.GetAllByTask(taskID)
-			.Select(g => g.ToResponse(unitOfWork.Mapper)).ToListAsync();
+		List<TodoGoal> goals = await unitOfWork.GoalService.GetAllByTask(taskID);
+		return goals.Select(g => g.ToResponse(unitOfWork.Mapper)).ToList();
 	}
 
-	[HttpGet(nameof(GetPendings))]
+	[HttpPost(nameof(GetPendings))]
 	public async Task<ActionResult<List<GoalResponse>>> GetPendings()
-		=> await unitOfWork.GoalService.GetPendings()
-			.Select(g => g.ToResponse(unitOfWork.Mapper)).ToListAsync();
+	{
+		List<TodoGoal> goals = await unitOfWork.GoalService.GetPendings();
+		return goals.Select(g => g.ToResponse(unitOfWork.Mapper)).ToList();
+	}
 
-	[HttpGet(nameof(GetCompleteds))]
+	[HttpPost(nameof(GetCompleteds))]
 	public async Task<ActionResult<List<GoalResponse>>> GetCompleteds()
-		=> await unitOfWork.GoalService.GetCompleteds()
-			.Select(g => g.ToResponse(unitOfWork.Mapper)).ToListAsync();
+	{
+		List<TodoGoal> goals = await unitOfWork.GoalService.GetCompleteds();
+		return goals.Select(g => g.ToResponse(unitOfWork.Mapper)).ToList();
+	}
 
-	[HttpPost]
+	[HttpPost(nameof(Create))]
 	public async Task<ActionResult<GoalResponse?>> Create(CreateGoalRequest createGoalRequest)
 	{
 		TodoGoal goal = createGoalRequest.ToGoal(unitOfWork.Mapper);
@@ -66,7 +74,7 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 
-	[HttpPut]
+	[HttpPut(nameof(Update))]
 	public async Task<ActionResult<GoalResponse>> Update(UpdateGoalRequest updateGoalRequest)
 	{
 		TodoGoal goal = updateGoalRequest.ToGoal(unitOfWork.Mapper);

@@ -20,11 +20,11 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Get the relation
-		TodoTaskGoal? relation = await unitOfWork.TaskGoalService.GetByID(task.ID, goal.ID);
+		TodoTaskGoal? relation = await unitOfWork.TaskGoalService.GetByID(goal.ID, task.ID);
 
 		// Assert: verify that the relation exists
 		Assert.NotNull(relation);
@@ -47,16 +47,16 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Act: dissociate the task
-		await unitOfWork.TaskGoalService.Dissociate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Dissociate(goal.ID, task.ID);
 		// Save changes
 		await unitOfWork.Save();
 
 		// Get the relation
-		TodoTaskGoal? relation = await unitOfWork.TaskGoalService.GetByID(task.ID, goal.ID);
+		TodoTaskGoal? relation = await unitOfWork.TaskGoalService.GetByID(goal.ID, task.ID);
 
 		// Assert: verify that the relation not exists
 		Assert.Null(relation);
@@ -77,7 +77,7 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Get the relation
@@ -105,11 +105,11 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Act: dissociate the task
-		await unitOfWork.TaskGoalService.Dissociate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Dissociate(goal.ID, task.ID);
 		// Save changes
 		await unitOfWork.Save();
 
@@ -135,7 +135,7 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Get the relation
@@ -165,11 +165,11 @@ public class TaskGoalServiceTests
 		// create relation
 		await unitOfWork.GoalService.Create(goal);
 		await unitOfWork.TaskService.Create(task);
-		await unitOfWork.TaskGoalService.Associate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Associate(goal.ID, task.ID);
 		await unitOfWork.Save();
 
 		// Act: dissociate the task
-		await unitOfWork.TaskGoalService.Dissociate(task.ID, goal.ID);
+		await unitOfWork.TaskGoalService.Dissociate(goal.ID, task.ID);
 		// Save changes
 		await unitOfWork.Save();
 

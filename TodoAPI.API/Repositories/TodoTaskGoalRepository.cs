@@ -15,19 +15,19 @@ public class TodoTaskGoalRepository : ITodoTaskGoalRepository
 		_dBContext = dBContext;
 	}
 
-	public async Task<bool> Exists(int taskID, int goalID)
-		=> await GetByID(taskID, goalID) != null;
 
-	public async Task<TodoTaskGoal?> GetByID(int taskID, int goalID)
-	{
-		return await Entities.SingleOrDefaultAsync(
+	public async Task<bool> Exists(int goalID, int taskID)
+		=> await GetByID(goalID, taskID) != null;
+
+	public async Task<TodoTaskGoal?> GetByID(int goalID, int taskID)
+		=> await GetAll().SingleOrDefaultAsync(
 			tg => tg.TodoTaskID.Equals(taskID) && tg.TodoGoalID.Equals(goalID));
-	}
+
 
 	public IQueryable<TodoTaskGoal> GetAll(int limit = 0)
 		=> Entities.TakeLimit(limit);
 
-	public TodoTaskGoal? Create(int taskID, int goalID)
+	public TodoTaskGoal? Create(int goalID, int taskID)
 	{
 		TodoTaskGoal relation = new()
 		{
@@ -38,9 +38,9 @@ public class TodoTaskGoalRepository : ITodoTaskGoalRepository
 		return Entities.Add(relation).Entity;
 	}
 
-	public async Task<bool> Delete(int taskID, int goalID)
+	public async Task<bool> Delete(int goalID, int taskID)
 	{
-		TodoTaskGoal? relation = await GetByID(taskID, goalID);
+		TodoTaskGoal? relation = await GetByID(goalID, taskID);
 		if (relation == null)
 			return false;
 

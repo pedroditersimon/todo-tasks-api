@@ -4,13 +4,13 @@ namespace TodoAPI.API.Repositories;
 
 public interface ITodoTaskGoalRepository
 {
-	public Task<bool> Exists(int taskID, int goalID);
+	public Task<bool> Exists(int goalID, int taskID);
 
 
-	public Task<TodoTaskGoal?> GetByID(int taskID, int goalID);
+	public Task<TodoTaskGoal?> GetByID(int goalID, int taskID);
 	public IQueryable<TodoTaskGoal> GetAll(int limit = 0);
 
-	public TodoTaskGoal? Create(int taskID, int goalID);
+	public TodoTaskGoal? Create(int goalID, int taskID);
 
-	public Task<bool> Delete(int taskID, int goalID);
+	public Task<bool> Delete(int goalID, int taskID);
 }
