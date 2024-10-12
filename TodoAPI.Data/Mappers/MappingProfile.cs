@@ -11,7 +11,7 @@ public class MappingProfile : Profile
 	public MappingProfile()
 	{
 		CreateMap<CreateTaskRequest, TodoTask>();
-		CreateMap<UpdateTaskRequest, TodoGoal>();
+		CreateMap<UpdateTaskRequest, TodoTask>();
 		CreateMap<TodoTask, TaskResponse>();
 
 		CreateMap<CreateGoalRequest, TodoGoal>();
