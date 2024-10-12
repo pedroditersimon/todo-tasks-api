@@ -32,8 +32,8 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 		return goal.ToResponse(unitOfWork.Mapper);
 	}
 
-	[HttpPost(nameof(GetAllByTask))]
-	public async Task<ActionResult<List<GoalResponse>>> GetAllByTask(int taskID)
+	[HttpPost(nameof(GetAllByTaskID) + "/{taskID}")]
+	public async Task<ActionResult<List<GoalResponse>>> GetAllByTaskID(int taskID)
 	{
 		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
 		if (task == null)
@@ -77,7 +77,11 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	[HttpPut(nameof(Update))]
 	public async Task<ActionResult<GoalResponse>> Update(UpdateGoalRequest updateGoalRequest)
 	{
-		TodoGoal goal = updateGoalRequest.ToGoal(unitOfWork.Mapper);
+		TodoGoal? originalGoal = await unitOfWork.GoalService.GetByID(updateGoalRequest.ID);
+		if (originalGoal == null)
+			return NotFound();
+
+		TodoGoal goal = originalGoal.ReplaceWith(updateGoalRequest);
 
 		TodoGoal? updatedGoal = await unitOfWork.GoalService.Update(goal);
 		if (updatedGoal == null)
