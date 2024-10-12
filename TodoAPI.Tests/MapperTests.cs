@@ -58,4 +58,56 @@ public class MapperTests
 		Assert.Equal(task.CreationDate, taskResponse.CreationDate);
 	}
 
+
+	[Fact]
+	public void ReplaceWith_UpdatesProperties_Correctly()
+	{
+		// Arrange
+		TodoTask originalTask = new()
+		{
+			ID = 1,
+			Name = "task name",
+			Description = "task description",
+			IsCompleted = true,
+			CreationDate = DateTime.UtcNow,
+			IsFavorite = false,
+			LastDeletedTime = DateTime.UtcNow,
+			LastUpdatedTime = DateTime.UtcNow,
+			IsDeleted = false
+		};
+
+		UpdateTaskRequest updateTask = new()
+		{
+			ID = 1,
+			Name = "new name",
+			Description = "",   // Description is empty, it should change anyway
+			IsCompleted = false,
+			IsFavorite = true
+		};
+
+		// Act
+		TodoTask replacedTask = originalTask.ReplaceWith(updateTask);
+
+		// Assert
+		Assert.NotNull(replacedTask);
+		Assert.NotEqual(replacedTask, originalTask);
+
+
+		// should change
+		Assert.Equal(updateTask.ID, replacedTask.ID);
+		Assert.Equal(updateTask.Name, replacedTask.Name);
+		Assert.Equal(updateTask.Description, replacedTask.Description);
+		Assert.False(replacedTask.IsCompleted);
+		Assert.True(replacedTask.IsFavorite);
+
+		// Remains unchanged
+		Assert.Equal(originalTask.CreationDate, replacedTask.CreationDate);
+		Assert.Equal(originalTask.LastDeletedTime, replacedTask.LastDeletedTime);
+		Assert.Equal(originalTask.LastUpdatedTime, replacedTask.LastUpdatedTime);
+		Assert.Equal(originalTask.IsDeleted, replacedTask.IsDeleted);
+
+		// original object should not be modified
+		Assert.Equal("task name", originalTask.Name);
+	}
+
 }

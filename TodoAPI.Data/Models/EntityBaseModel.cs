@@ -2,7 +2,7 @@
 
 namespace TodoAPI.Data.Models;
 
-public class EntityBaseModel<Tid>
+public class EntityBaseModel<Tid> : ICloneable
 {
 	public Tid ID { get; set; }
 
@@ -13,4 +13,7 @@ public class EntityBaseModel<Tid>
 
 	[ConcurrencyCheck]
 	public DateTime LastUpdatedTime { get; set; }
+
+	public virtual object Clone()
+		=> MemberwiseClone();
 }
