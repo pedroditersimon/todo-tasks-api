@@ -5,7 +5,7 @@ EXPOSE 8080
 # Copy everything
 COPY . ./
 # Restore as distinct layers
-RUN dotnet restore
+RUN dotnet restore TodoAPI.sln
 # Build and publish a release
 RUN dotnet publish -c Release -o out
 

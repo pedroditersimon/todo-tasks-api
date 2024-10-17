@@ -7,16 +7,19 @@ using TodoAPI.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// set env varaibles to appsetting.json
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 
 // load the PostgreDBSettings from appsettings.json
-builder.Services.Configure<PostgreDBSettings>(builder.Configuration.GetSection("PostgreDBSettings"));
+builder.Services.Configure<PostgresDBSettings>(builder.Configuration.GetSection("PostgresDBSettings"));
 
 // configure DBContext of PostgreDBService, using loaded settings
 builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbContextOptionsBuilder optionsBuilder) =>
 {
-	PostgreDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgreDBSettings>>().Value;
-	var connectionString = $"Host={dbSettings.Host};Username={dbSettings.Username};Password={dbSettings.Password};Database={dbSettings.DatabaseName}";
+	PostgresDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgresDBSettings>>().Value;
+	var connectionString = $"Host={dbSettings.Host};Username={dbSettings.User};Password={dbSettings.Pass};Database={dbSettings.DbName}";
 	optionsBuilder.UseNpgsql(connectionString);
 	//optionsBuilder.UseLazyLoadingProxies();
 	optionsBuilder.AddInterceptors(
