@@ -84,7 +84,14 @@ if (app.Environment.IsDevelopment())
 
 // Configure the HTTP request pipeline.
 
-app.UseCors("AllowAnyOrigin");
+app.UseRouting();
+
+app.UseCors("AllowAnyOrigin"); // Aplica la política CORS
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.UseHttpsRedirection();
 
