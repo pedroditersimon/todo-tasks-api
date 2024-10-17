@@ -20,6 +20,7 @@ builder.Services.AddDbContext<TodoDBContext>((IServiceProvider provider, DbConte
 {
 	PostgresDBSettings dbSettings = provider.GetRequiredService<IOptions<PostgresDBSettings>>().Value;
 	var connectionString = $"Host={dbSettings.Host};Username={dbSettings.User};Password={dbSettings.Pass};Database={dbSettings.DbName}";
+	Console.WriteLine(connectionString);
 	optionsBuilder.UseNpgsql(connectionString);
 	//optionsBuilder.UseLazyLoadingProxies();
 	optionsBuilder.AddInterceptors(
