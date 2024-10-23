@@ -5,7 +5,7 @@ using Xunit;
 
 namespace TodoAPI.Tests;
 
-public class TakeLimitTest
+public class TakeLimitTests
 {
 	[Fact]
 	public async void GetAllTasks_WithLimit()
