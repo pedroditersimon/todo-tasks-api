@@ -3,6 +3,9 @@ Todo:
 - recalcular el goal estado unicamente cuando el IsCompleted de la tarea ha cambiado
 - filtrar y ordenar por favoritos y completados, ademas que sea opcional
 - (necesario?) envolver todas las respuestas en un Ok();
+- Agregar autenticacion de usuarios por medio de un header
+- Crear tests para los controladores
+
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals
@@ -17,3 +20,4 @@ Done:
 - marcar los goals que necesiten actualizarce, y solo actualizarlos al recuperarlos
 - cambiar el metodo de goal controller GET a POST, ya que ejecutan tareas de modificacion
 - Explicar el funcionamiento de GoalCompletedStatusService
+- Utilizar un array de ids para agregar/eliminar multiples tareas a un goal.

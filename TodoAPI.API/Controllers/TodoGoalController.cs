@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Immutable;
 using TodoAPI.API.Services;
 using TodoAPI.Data.DTOs.TodoGoal;
 using TodoAPI.Data.Mappers;
@@ -94,20 +95,25 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 		return updatedGoal.ToResponse(unitOfWork.Mapper);
 	}
 
+
 	[HttpPatch(nameof(AddTask))]
-	public async Task<ActionResult<GoalResponse>> AddTask(int goalID, int taskID)
+	public async Task<ActionResult<GoalResponse>> AddTask(int goalID, ImmutableArray<int> taskIDs)
 	{
 		TodoGoal? goal = await unitOfWork.GoalService.GetByID(goalID);
 		if (goal == null)
 			return NotFound();
 
-		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
-		if (task == null)
-			return NotFound();
+		// add every id
+		foreach (var taskID in taskIDs)
+		{
+			TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
+			if (task == null)
+				return NotFound();
 
-		bool success = await unitOfWork.GoalService.AddTask(goalID, taskID);
-		if (!success)
-			return Conflict();
+			bool success = await unitOfWork.GoalService.AddTask(goalID, taskID);
+			if (!success)
+				return Conflict();
+		}
 
 		// save
 		bool saved = await unitOfWork.Save() > 0;
@@ -123,19 +129,23 @@ public class TodoGoalController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPatch(nameof(RemoveTask))]
-	public async Task<ActionResult<GoalResponse>> RemoveTask(int goalID, int taskID)
+	public async Task<ActionResult<GoalResponse>> RemoveTask(int goalID, ImmutableArray<int> taskIDs)
 	{
 		TodoGoal? goal = await unitOfWork.GoalService.GetByID(goalID);
 		if (goal == null)
 			return NotFound();
 
-		TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
-		if (task == null)
-			return NotFound();
+		// remove every id
+		foreach (var taskID in taskIDs)
+		{
+			TodoTask? task = await unitOfWork.TaskRepository.GetByID(taskID);
+			if (task == null)
+				return NotFound();
 
-		bool successRemoved = await unitOfWork.GoalService.RemoveTask(goalID, taskID);
-		if (!successRemoved)
-			return Conflict();
+			bool successRemoved = await unitOfWork.GoalService.RemoveTask(goalID, taskID);
+			if (!successRemoved)
+				return Conflict();
+		}
 
 		// save
 		bool saved = await unitOfWork.Save() > 0;
