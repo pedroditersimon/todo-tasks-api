@@ -4,6 +4,7 @@ Todo:
 - (necesario?) envolver todas las respuestas en un Ok();
 - Agregar autenticacion de usuarios por medio de un header
 - Crear tests para los controladores
+- Agregar endpoint para health check
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals

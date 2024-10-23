@@ -2,6 +2,13 @@
 API backend desarrollada en ASP.Net C# utilizando EntityFramework, diseñada para gestionar un sistema simple de tareas y objetivos.  
 Este es un proyecto de practica para implementar el desarrollo basico de un sistema backend en .Net.
 
+El proyecto es de uso libre por cualquiera que desee descargarlo, editarlo y utilizarlo.  
+
+## Aplicacion Frontend
+Desarrollé una aplicacion frontend en React que hace uso de esta api.
+Repositorio del frontend:  
+https://github.com/pedroditersimon/todo-tasks-frontend
+
 ## Conocimientos adquiridos
 Resumen de los conocimientos nuevos que adquirí y apliqué en el sistema:
 - Estructura MVC en backend.
