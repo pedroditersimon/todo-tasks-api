@@ -37,14 +37,12 @@ public class TodoTaskService : GenericService<TodoTask, int>, ITodoTaskService
 	public IQueryable<TodoTask> GetPendings(int limit = 0)
 		=> _repository.GetAll()
 			.Where((t) => t.IsCompleted == false)
-			.OrderBy(t => t.ID)
 			.TakeLimit(limit);
 
 
 	public IQueryable<TodoTask> GetCompleteds(int limit = 0)
 			=> _repository.GetAll()
 			.Where((t) => t.IsCompleted == true)
-			.OrderBy(t => t.ID)
 			.TakeLimit(limit);
 
 	#endregion

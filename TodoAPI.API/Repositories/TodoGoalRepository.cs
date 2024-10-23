@@ -10,6 +10,7 @@ public class TodoGoalRepository(TodoDBContext dbContext)
 	public override IQueryable<TodoGoal> GetAll()
 	{
 		return base.GetAll()
+			.OrderBy(g => g.ID)
 			.OrderByDescending(g => g.IsCompleted)
 			.OrderByDescending(g => g.IsFavorite);
 	}

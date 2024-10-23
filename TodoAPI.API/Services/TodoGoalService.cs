@@ -56,7 +56,6 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService, 
 
 		return await _repository.GetAll()
 			.Where((g) => !g.IsCompleted)
-			.OrderBy(g => g.ID)
 			.TakeLimit(limit).ToListAsync();
 	}
 
@@ -69,7 +68,6 @@ public class TodoGoalService : GenericService<TodoGoal, int>, ITodoGoalService, 
 
 		return await _repository.GetAll()
 			.Where((g) => g.IsCompleted)
-			.OrderBy(g => g.ID)
 			.TakeLimit(limit).ToListAsync();
 	}
 
