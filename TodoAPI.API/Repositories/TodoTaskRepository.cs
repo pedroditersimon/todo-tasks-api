@@ -9,8 +9,8 @@ public class TodoTaskRepository(TodoDBContext dbContext)
 	public override IQueryable<TodoTask> GetAll()
 	{
 		return base.GetAll()
-			.OrderBy(t => t.ID)
-			.OrderByDescending(t => t.IsCompleted)
-			.OrderByDescending(t => t.IsFavorite);
+			.OrderByDescending(t => t.IsFavorite)
+			.ThenByDescending(t => t.IsCompleted)
+			.ThenBy(t => t.ID);
 	}
 }
