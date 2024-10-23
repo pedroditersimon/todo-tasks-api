@@ -1,11 +1,10 @@
 
 Todo:
 - recalcular el goal estado unicamente cuando el IsCompleted de la tarea ha cambiado
-- filtrar y ordenar por favoritos y completados, ademas que sea opcional
 - (necesario?) envolver todas las respuestas en un Ok();
 - Agregar autenticacion de usuarios por medio de un header
 - Crear tests para los controladores
-
+- filtrar y ordenar por favoritos y completados
 
 Done:
 - Agregar propiedad de "favorito" a las tareas y goals
